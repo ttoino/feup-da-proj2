@@ -5,6 +5,8 @@ struct DatasetGenerationParams;
 class Dataset;
 
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 /**
@@ -15,16 +17,80 @@ struct DatasetGenerationParams {
 };
 
 /**
+ * @brief Represents an edge connecting two nodes.
+ */
+struct Edge {
+    /**
+     * @brief The destination node.
+     */
+    int dest;
+    int capacity;
+    int duration;
+
+    Edge(const int dest, const int capacity, const int duration)
+        : dest(dest), capacity(capacity), duration(duration){};
+    Edge(){};
+
+    bool operator==(const Edge &other) const { return dest == other.dest; }
+};
+
+namespace std {
+    template <> struct hash<Edge> {
+        std::size_t operator()(const Edge &e) const { return e.dest; }
+    };
+}
+
+/**
+ * @brief Represents a node in a Graph.
+ */
+struct Node {
+    /**
+     * @brief The outgoing edges connecting this node to others.
+     */
+    std::unordered_set<Edge> adj{};
+
+    int label = -1;
+
+    Node(const int label) : label(label){};
+    Node(){};
+};
+
+/**
  * @brief Holds data from a dataset to be used by different scenarios.
  *
  * @details Also has several static methods to make dataset management easier.
  */
 class Dataset {
+    /**
+     * @brief This graph's nodes.
+     *
+     * The keys are each node's stop code and the values are the nodes
+     * themselves.
+     */
+    std::unordered_map<int, Node> nodes;
+
     // TODO
 
+    Dataset(const unsigned int n);
     Dataset();
 
 public:
+    void addEdge(const int src, const int &dest, const int capacity,
+                 const int duration);
+    void addEdge(Node &src, Node &dest, const int capacity, const int duration);
+
+    /**
+     * @return This graph's nodes.
+     */
+    std::unordered_map<int, Node> &getNodes() { return nodes; };
+    /**
+     * @brief Get the node with the specified code.
+     *
+     * @param id The stop code.
+     * @return The node.
+     */
+    Node &getNode(const int &id) { return nodes.at(id); };
+
     /**
      * @brief Loads a dataset from the given path.
      *

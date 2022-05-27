@@ -9,6 +9,8 @@ class Dataset;
 #include <unordered_set>
 #include <vector>
 
+#define INF (std::numeric_limits<int>::max() / 2)
+
 /**
  * @brief Parameters to customize how Dataset::generate() generates datasets.
  */
@@ -50,6 +52,7 @@ struct Node {
     std::unordered_set<Edge> adj{};
 
     int label = -1;
+    int parent;
 
     Node(const int label) : label(label){};
     Node(){};

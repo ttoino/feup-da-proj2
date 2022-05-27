@@ -2,6 +2,7 @@
 #include <fstream>
 #include <limits>
 #include <list>
+#include <set>
 #include <sstream>
 
 #include "../includes/constants.hpp"
@@ -18,14 +19,48 @@ std::string ScenarioResult::toCSV() const {
     return out.str();
 }
 
-const ScenarioResult scenario1(const Dataset &dataset,
+const ScenarioResult scenario1(Dataset &dataset,
                                Scenario1Strategy strat) {
-    // TODO
+
+    auto& nodes = dataset.getNodes();
+
+    std::vector<int> capacities{static_cast<int>(nodes.size()) + 1, 0};
+    std::set<std::pair<int /* capacity */, int /* node */>> capacitiesHeap;
+
+    for (auto& [index, node] : nodes) {
+        capacitiesHeap.insert({0, index});
+        capacities.at(index) = 0;
+        node.parent = -1;
+    }
+
+    capacitiesHeap.erase({0, 1});
+    capacitiesHeap.insert({-INF, 1});
+    capacities.at(1) = INF;
+    nodes[1].parent = 1;
+
+    while (!capacitiesHeap.empty()) {
+
+        int v = capacitiesHeap.extract(capacitiesHeap.begin()).value().second;
+
+        auto& orig = nodes.at(v);
+
+        for (auto& edge : orig.adj) {
+            auto& w = edge.dest;
+
+            if (std::min(capacities[v], edge.capacity) > capacities[w]) {
+
+                capacitiesHeap.erase({-capacities[w], w});
+                capacities[w] = std::min(capacities[v], edge.capacity);
+                nodes.at(w).parent = v;
+                capacitiesHeap.insert({-capacities[w], w});
+            }
+        }
+    }
 
     return {{}};
 }
 
-const ScenarioResult scenario2(const Dataset &dataset,
+const ScenarioResult scenario2(Dataset &dataset,
                                Scenario2Strategy strat) {
     // TODO
 

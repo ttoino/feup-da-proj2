@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <functional>
 #include <fstream>
 #include <limits>
 #include <list>
@@ -25,7 +26,7 @@ const ScenarioResult scenario1(Dataset &dataset,
     auto& nodes = dataset.getNodes();
 
     std::vector<int> capacities{static_cast<int>(nodes.size()) + 1, 0};
-    std::set<std::pair<int /* capacity */, int /* node */>> capacitiesHeap;
+    std::set<std::pair<int /* capacity */, int /* node */>, std::greater<std::pair<int, int>>> capacitiesHeap;
 
     for (auto& [index, node] : nodes) {
         capacitiesHeap.insert({0, index});
@@ -34,7 +35,7 @@ const ScenarioResult scenario1(Dataset &dataset,
     }
 
     capacitiesHeap.erase({0, 1});
-    capacitiesHeap.insert({-INF, 1});
+    capacitiesHeap.insert({INF, 1});
     capacities.at(1) = INF;
     nodes[1].parent = 1;
 
@@ -49,10 +50,10 @@ const ScenarioResult scenario1(Dataset &dataset,
 
             if (std::min(capacities[v], edge.capacity) > capacities[w]) {
 
-                capacitiesHeap.erase({-capacities[w], w});
+                capacitiesHeap.erase({capacities[w], w});
                 capacities[w] = std::min(capacities[v], edge.capacity);
                 nodes.at(w).parent = v;
-                capacitiesHeap.insert({-capacities[w], w});
+                capacitiesHeap.insert({capacities[w], w});
             }
         }
     }

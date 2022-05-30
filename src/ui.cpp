@@ -189,8 +189,8 @@ void UserInterface::paginatedMenu(const std::vector<T> &items) {
 void UserInterface::chooseScenarioMenu() {
     auto menu = optionsMenu<Menu>({
         {"Go back", Menu::MAIN},
-        {"Scenario 1 - Minimize used vans", Menu::SCENARIO_ONE},
-        {"Scenario 2 - Maximize profit", Menu::SCENARIO_TWO},
+        {"Scenario 1 - No group separation", Menu::SCENARIO_ONE},
+        {"Scenario 2 - Group separation", Menu::SCENARIO_TWO},
         {"Run all scenarios (with every dataset)", Menu::ALL_SCENARIOS},
     });
     currentMenu = menu.value_or(currentMenu);

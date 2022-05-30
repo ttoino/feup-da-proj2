@@ -8,6 +8,8 @@ class Dataset;
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include <climits>
+#include <iostream>
 
 #define INF (std::numeric_limits<int>::max() / 2)
 
@@ -54,6 +56,8 @@ struct Node {
     int label = -1;
     int parent;
 
+    bool visited;
+
     Node(const int label) : label(label){};
     Node(){};
 };
@@ -67,15 +71,27 @@ class Dataset {
     /**
      * @brief This graph's nodes.
      *
-     * The keys are each node's stop code and the values are the nodes
+     * The keys are each node's id and the values are the nodes
      * themselves.
      */
     std::unordered_map<int, Node> nodes;
+    std::vector<std::vector<int>> cap;
 
     // TODO
 
     Dataset(const unsigned int n);
     Dataset();
+
+    /**
+    * @brief Applies breadth-first-search to the graph
+    *
+    * @param s Starting node
+    * @param t Destination node
+    * @param parent Array to keep the path
+    *
+    * @return The max flow that is available in the path from s to t
+    */
+    int bfs(int s, int t, std::vector<int> parent);
 
 public:
     void addEdge(const int src, const int &dest, const int capacity,
@@ -123,6 +139,16 @@ public:
      * @return A vector with the datasets in the ::DATASETS_PATH.
      */
     static std::vector<std::string> getAvailableDatasets();
+
+    /**
+    * @brief Implementation of the Edmonds-Karp algorithm
+    *
+    * @param s Starting node
+    * @param t Destination node
+    *
+    * @return The max flow from s to t
+    */
+    int edmondsKarp(int s, int t);
 };
 
 #endif

@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
+#include <queue>
 
 #include "../includes/constants.hpp"
 #include "../includes/dataset.hpp"
@@ -9,6 +10,7 @@
 Dataset::Dataset(const unsigned int n) {
     for (int i = 1; i <= n; ++i)
         nodes.insert({i, {i}});
+    cap.resize(nodes.size() + 1, std::vector<int>(nodes.size() + 1));
 }
 
 Dataset::Dataset() {}
@@ -71,4 +73,63 @@ void Dataset::addEdge(Node &src, Node &dest, const int capacity,
 void Dataset::addEdge(const int src, const int &dest, const int capacity,
                       const int duration) {
     addEdge(nodes[src], nodes[dest], capacity, duration);
+}
+
+int Dataset::bfs(int s, int t, std::vector<int> parent) {
+
+    for (unsigned i = 1; i <= nodes.size(); i++) 
+        parent.at(i) = -1;
+
+    parent.at(s) = -2;         
+    std::queue<std::pair<int, int>> q;
+    q.push({s, INT_MAX});
+
+    while (!q.empty()) {
+
+        int cur = q.front().first;
+        int flow = q.front().second;
+        q.pop();
+
+        for (Edge next : nodes.at(cur).adj) {
+            int dest  = next.dest;
+
+            if (parent.at(dest) == -1 && cap.at(cur).at(dest) > 0) {
+                parent.at(dest) = cur;
+                int new_flow = std::min(flow, cap.at(cur).at(dest));
+
+                if (dest == t) 
+                    return new_flow;
+
+                q.push({dest, new_flow});
+            }
+        }
+    }
+
+  return 0;
+}
+
+int Dataset::edmondsKarp(int s, int t) {
+    
+    int flow = 0;
+    std::vector<int> parent(nodes.size() + 1);
+
+    while (true) {
+        int new_flow = bfs(s, t, parent);
+        
+        if (new_flow == 0) 
+            break;            
+
+        flow += new_flow;
+        int cur = t;
+
+        while (cur != s) {
+            int prev = parent.at(cur);	
+            cap.at(prev).at(cur) -= new_flow;
+            cap.at(cur).at(prev) += new_flow;
+            cur = prev;
+            
+        }
+    }
+
+    return flow;
 }

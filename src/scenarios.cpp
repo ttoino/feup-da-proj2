@@ -5,6 +5,7 @@
 #include <list>
 #include <set>
 #include <sstream>
+#include <iostream>
 
 #include "../includes/constants.hpp"
 #include "../includes/scenarios.hpp"
@@ -63,7 +64,18 @@ const ScenarioResult scenario1(Dataset &dataset,
 
 const ScenarioResult scenario2(Dataset &dataset,
                                Scenario2Strategy strat) {
-    // TODO
+    
+
+    std::vector<int> path;
+
+    auto& nodes = dataset.getNodes();
+    
+    Node startingNode = nodes.at(1);
+    Node destinationNode = nodes.at(nodes.size());
+
+    int maxFlow = dataset.edmondsKarp(startingNode.label, destinationNode.label);
+
+    std::cout << "max flow = " << maxFlow << std::endl;
 
     return {{}};
 }

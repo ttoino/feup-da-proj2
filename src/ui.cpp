@@ -281,7 +281,7 @@ void UserInterface::allScenariosMenu() {
 }
 
 void UserInterface::resultsMenu() {
-    std::cout << "Took " << result.runtime.count() << "µs\n\n";
+    std::cout << "Flow = " << result.flow << "\n\n";
 
     auto menu = optionsMenu<Menu>({
         {"Continue", Menu::MAIN},

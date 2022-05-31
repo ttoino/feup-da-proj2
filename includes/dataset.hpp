@@ -91,7 +91,7 @@ class Dataset {
     *
     * @return The max flow that is available in the path from s to t
     */
-    int bfs(int s, int t, std::vector<int> parent);
+    int bfs(int s, int t, std::vector<int> *parent);
 
 public:
     void addEdge(const int src, const int &dest, const int capacity,

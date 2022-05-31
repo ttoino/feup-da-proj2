@@ -73,14 +73,15 @@ void Dataset::addEdge(Node &src, Node &dest, const int capacity,
 void Dataset::addEdge(const int src, const int &dest, const int capacity,
                       const int duration) {
     addEdge(nodes[src], nodes[dest], capacity, duration);
+    cap.at(src).at(dest) = capacity;
 }
 
-int Dataset::bfs(int s, int t, std::vector<int> parent) {
+int Dataset::bfs(int s, int t, std::vector<int>* parent) {
 
     for (unsigned i = 1; i <= nodes.size(); i++) 
-        parent.at(i) = -1;
+        parent->at(i) = -1;
 
-    parent.at(s) = -2;         
+    parent->at(s) = -2;         
     std::queue<std::pair<int, int>> q;
     q.push({s, INT_MAX});
 
@@ -93,12 +94,15 @@ int Dataset::bfs(int s, int t, std::vector<int> parent) {
         for (Edge next : nodes.at(cur).adj) {
             int dest  = next.dest;
 
-            if (parent.at(dest) == -1 && cap.at(cur).at(dest) > 0) {
-                parent.at(dest) = cur;
+            if (parent->at(dest) == -1 && cap.at(cur).at(dest) > 0) {
+                parent->at(dest) = cur;
                 int new_flow = std::min(flow, cap.at(cur).at(dest));
 
-                if (dest == t) 
+                if (dest == t) {
+                    std::cout << "new_flow = " << new_flow << std::endl;
                     return new_flow;
+                }
+                    
 
                 q.push({dest, new_flow});
             }
@@ -114,7 +118,7 @@ int Dataset::edmondsKarp(int s, int t) {
     std::vector<int> parent(nodes.size() + 1);
 
     while (true) {
-        int new_flow = bfs(s, t, parent);
+        int new_flow = bfs(s, t, &parent);
         
         if (new_flow == 0) 
             break;            

@@ -10,8 +10,8 @@
 #include "../includes/constants.hpp"
 #include "../includes/scenarios.hpp"
 
-ScenarioResult::ScenarioResult(const std::chrono::microseconds &runtime)
-    : runtime(runtime) {}
+ScenarioResult::ScenarioResult(int flow)
+    : flow(flow) {}
 
 std::string ScenarioResult::toCSV() const {
     std::stringstream out{};
@@ -75,9 +75,7 @@ const ScenarioResult scenario2(Dataset &dataset,
 
     int maxFlow = dataset.edmondsKarp(startingNode.label, destinationNode.label);
 
-    std::cout << "max flow = " << maxFlow << std::endl;
-
-    return {{}};
+    return {maxFlow};
 }
 
 void runAllScenarios() {

@@ -41,6 +41,8 @@ const ScenarioResult scenario1(Dataset &dataset,
             break;
     }
 
+    return result;
+
 }
 
 const ScenarioResult scenario2(Dataset &dataset,

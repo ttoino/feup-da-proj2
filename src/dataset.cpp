@@ -16,6 +16,9 @@ Dataset::Dataset(const unsigned int n) {
 Dataset::Dataset() {}
 
 Dataset Dataset::load(const std::string &path) {
+
+    if (path == "output.csv") return {};
+
     std::ifstream dataset_file{DATASETS_PATH + path};
 
     if (!dataset_file.is_open())
@@ -25,6 +28,9 @@ Dataset Dataset::load(const std::string &path) {
     std::vector<std::string> tokens;
 
     std::getline(dataset_file, line);
+
+    if (line.empty()) return {};
+
     tokens = split(line, ' ');
 
     unsigned int n = stoul(tokens[0]);
@@ -55,7 +61,7 @@ std::vector<std::string> Dataset::getAvailableDatasets() {
     std::vector<std::string> result{};
 
     for (auto &p : std::filesystem::directory_iterator(DATASETS_PATH))
-        if (p.is_regular_file())
+        if (p.is_regular_file() && p.path().filename().string().find("output") == std::string::npos)
             result.push_back(p.path().filename().string());
 
     std::sort(result.begin(), result.end());

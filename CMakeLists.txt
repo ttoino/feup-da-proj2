@@ -12,14 +12,16 @@ add_executable(da_proj2
                src/ui.cpp
                src/utils.cpp
                src/dataset.cpp
-               src/scenarios.cpp)
+               src/scenarios.cpp
+               src/subscenarios.cpp)
 
 add_executable(da_proj2_no_ansi
                 src/main.cpp
                 src/ui.cpp
                 src/utils.cpp
                 src/dataset.cpp
-                src/scenarios.cpp)
+                src/scenarios.cpp
+                src/subscenarios.cpp)
 target_compile_definitions(da_proj2_no_ansi PUBLIC NO_ANSI)
 
 include_directories(da_proj2 includes/)

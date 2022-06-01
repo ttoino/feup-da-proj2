@@ -76,7 +76,7 @@ ScenarioResult scenario2_3(Dataset &dataset) {
 
     auto tstart = std::chrono::high_resolution_clock::now();
 
-    std::vector<int> parent;
+    std::vector<int> parents;
     std::vector<int> path;
 
     auto& nodes = dataset.getNodes();
@@ -84,7 +84,20 @@ ScenarioResult scenario2_3(Dataset &dataset) {
     Node startingNode = nodes.at(1);
     Node destinationNode = nodes.at(nodes.size());
 
-    int maxFlow = dataset.edmondsKarp(startingNode.label, destinationNode.label).first;
+    std::pair<int, std::vector<int>> res = dataset.edmondsKarp(
+        startingNode.label, destinationNode.label);
+    
+    int maxFlow = res.first;
+    parents = res.second;
+
+    int node = parents.at(nodes.size());
+    path.insert(path.begin(), nodes.at(nodes.size()).label);
+
+    while(node != nodes.at(1).label) {
+        path.insert(path.begin(), node);
+        node = parents.at(node);
+    }
+    path.insert(path.begin(), nodes.at(1).label);
 
     auto tend = std::chrono::high_resolution_clock::now();
 

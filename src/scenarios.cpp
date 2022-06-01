@@ -17,7 +17,7 @@ ScenarioResult::ScenarioResult(int flow, int maxCapacity, std::vector<int> path,
 std::string ScenarioResult::toCSV() const {
     std::stringstream out{};
 
-    out << runtime << ',' << this->flow << ',' << this->maxCapacity;
+    //out << runtime << ',' << this->flow << ',' << this->maxCapacity;
 
     if (!this->path.empty()) {
         std::stringstream path_ss;

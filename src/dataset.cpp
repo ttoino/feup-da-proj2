@@ -11,7 +11,7 @@
 Dataset::Dataset(const unsigned int n) {
     for (int i = 1; i <= n; ++i)
         nodes.insert({i, {i}});
-    cap.resize(nodes.size() + 1, std::vector<int>(nodes.size() + 1));
+    residualGraph.resize(nodes.size() + 1, std::vector<int>(nodes.size() + 1));
 }
 
 Dataset::Dataset() {}
@@ -80,10 +80,13 @@ void Dataset::addEdge(Node &src, Node &dest, const int capacity,
 void Dataset::addEdge(const int src, const int &dest, const int capacity,
                       const int duration) {
     addEdge(nodes[src], nodes[dest], capacity, duration);
-    cap.at(src).at(dest) = capacity;
+    residualGraph.at(src).at(dest) = capacity;
 }
 
-int Dataset::EK_bfs(int s, int t, std::vector<int>* parent) {
+int Dataset::EK_bfs(
+    int s, int t, std::vector<int>* parent,
+    std::vector<std::vector<int>>* residualGraph
+    ) {
 
     for (unsigned i = 1; i <= nodes.size(); i++) 
         parent->at(i) = -1;
@@ -101,9 +104,9 @@ int Dataset::EK_bfs(int s, int t, std::vector<int>* parent) {
         for (Edge next : nodes.at(cur).adj) {
             int dest = next.dest;
 
-            if (parent->at(dest) == -1 && cap.at(cur).at(dest) > 0) {
+            if (parent->at(dest) == -1 && residualGraph->at(cur).at(dest) > 0) {
                 parent->at(dest) = cur;
-                int new_flow = std::min(flow, cap.at(cur).at(dest));
+                int new_flow = std::min(flow, residualGraph->at(cur).at(dest));
 
                 if (dest == t) {
                     return new_flow;
@@ -121,26 +124,29 @@ std::pair<int, std::vector<int>> Dataset::edmondsKarp(int s, int t) {
     
     int flow = 0;
     std::vector<int> parent(nodes.size() + 1);
+    std::vector<int> path;
+    std::vector<std::vector<int>> residualGraph = this->getCap();
 
     while (true) {
-        int new_flow = EK_bfs(s, t, &parent);
+        int new_flow = EK_bfs(s, t, &parent, &residualGraph);
         
         if (new_flow == 0) 
             break;            
 
+        path = parent;
         flow += new_flow;
         int cur = t;
 
         while (cur != s) {
             int prev = parent.at(cur);	
-            cap.at(prev).at(cur) -= new_flow;
-            cap.at(cur).at(prev) += new_flow;
+            residualGraph.at(prev).at(cur) -= new_flow;
+            residualGraph.at(cur).at(prev) += new_flow;
             cur = prev;
             
         }
     }
 
-    return {flow, parent};
+    return { flow, path };
 }
 
 std::pair<int, std::vector<int>> Dataset::BFS(int s, int t) {

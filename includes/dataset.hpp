@@ -20,6 +20,11 @@ struct DatasetGenerationParams {
     // TODO
 };
 
+enum EdmondsKarpUsage {
+    DEFAULT,
+    CUSTOM,
+};
+
 /**
  * @brief Represents an edge connecting two nodes.
  */
@@ -75,6 +80,11 @@ class Dataset {
      * themselves.
      */
     std::unordered_map<int, Node> nodes;
+
+    /**
+     * @brief This graph's residual graph in a matrix
+     * 
+     */
     std::vector<std::vector<int>> residualGraph;
 
     // TODO
@@ -88,6 +98,7 @@ class Dataset {
     * @param s Starting node
     * @param t Destination node
     * @param parent Array to keep the path
+    * @param residualGraph The residual graph of a dataset
     *
     * @return The max flow that is available in the path from s to t
     */
@@ -154,7 +165,8 @@ public:
     *
     * @return The max flow from s to t
     */
-    std::pair<int, std::vector<int>> edmondsKarp(int s, int t);
+    std::pair<int, std::vector<int>> edmondsKarp(int s, int t,
+        EdmondsKarpUsage usage, int groupSize);
 
     /**
      * @brief Performs a Breadth-First Search algorithm.

@@ -120,30 +120,52 @@ int Dataset::EK_bfs(
   return 0;
 }
 
-std::pair<int, std::vector<int>> Dataset::edmondsKarp(int s, int t) {
+std::pair<int, std::vector<int>> Dataset::edmondsKarp(
+    int s, int t, EdmondsKarpUsage usage, int groupSize) {
     
-    int flow = 0;
+    int flow = 0, new_flow = 0;
     std::vector<int> parent(nodes.size() + 1);
     std::vector<int> path;
     std::vector<std::vector<int>> residualGraph = this->getCap();
 
-    while (true) {
-        int new_flow = EK_bfs(s, t, &parent, &residualGraph);
-        
-        if (new_flow == 0) 
-            break;            
-
-        path = parent;
-        flow += new_flow;
-        int cur = t;
-
-        while (cur != s) {
-            int prev = parent.at(cur);	
-            residualGraph.at(prev).at(cur) -= new_flow;
-            residualGraph.at(cur).at(prev) += new_flow;
-            cur = prev;
+    if(usage == EdmondsKarpUsage::DEFAULT) {
+        while (true) {
+            new_flow = EK_bfs(s, t, &parent, &residualGraph);
             
+            if (new_flow == 0) 
+                break;            
+
+            path = parent;
+            flow += new_flow;
+            int cur = t;
+
+            while (cur != s) {
+                int prev = parent.at(cur);	
+                residualGraph.at(prev).at(cur) -= new_flow;
+                residualGraph.at(cur).at(prev) += new_flow;
+                cur = prev;
+                
+            }
         }
+    } else if (usage == EdmondsKarpUsage::CUSTOM) {
+        while (flow < groupSize) {
+            new_flow = EK_bfs(s, t, &parent, &residualGraph);
+            
+            if (new_flow == 0) 
+                break;            
+
+            path = parent;
+            flow += new_flow;
+            int cur = t;
+
+            while (cur != s) {
+                int prev = parent.at(cur);	
+                residualGraph.at(prev).at(cur) -= new_flow;
+                residualGraph.at(cur).at(prev) += new_flow;
+                cur = prev;
+                
+            }
+        }        
     }
 
     return { flow, path };

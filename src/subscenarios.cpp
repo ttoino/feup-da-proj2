@@ -50,7 +50,7 @@ ScenarioResult scenario1_1(Dataset &dataset) {
 
     auto tend = std::chrono::high_resolution_clock::now();
 
-    return {-1, capacities[nodes.size()], path, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
+    return {-1, capacities[nodes.size()], -1, path, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
 }
 
 ScenarioResult scenario1_2(Dataset &dataset) {
@@ -61,11 +61,46 @@ ScenarioResult scenario1_2(Dataset &dataset) {
 
     auto tend = std::chrono::high_resolution_clock::now();
 
-    return {-1, results.first, results.second, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
+    return {-1, results.first, -1, results.second, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
 }
 
 ScenarioResult scenario2_1(Dataset &dataset) {
-    //TODO
+    auto tstart = std::chrono::high_resolution_clock::now();
+
+    int groupSize = 0;
+    
+    std::vector<int> parents;
+    std::vector<int> path;
+
+    auto& nodes = dataset.getNodes();
+    EdmondsKarpUsage usage = EdmondsKarpUsage::CUSTOM;
+    
+    Node startingNode = nodes.at(1);
+    Node destinationNode = nodes.at(nodes.size());
+
+    std::cout << "Group size: ";
+    std::cin >> groupSize;
+    std::cin.ignore(1000, '\n');
+    std::cin.clear();
+
+    std::pair<int, std::vector<int>> res = dataset.edmondsKarp(
+        startingNode.label, destinationNode.label, usage, groupSize);
+    
+    int maxFlow = res.first;
+    parents = res.second;
+
+    int node = parents.at(nodes.size());
+    path.insert(path.begin(), nodes.at(nodes.size()).label);
+
+    while(node != nodes.at(1).label) {
+        path.insert(path.begin(), node);
+        node = parents.at(node);
+    }
+    path.insert(path.begin(), nodes.at(1).label);
+    
+    auto tend = std::chrono::high_resolution_clock::now();
+
+    return {maxFlow, -1, groupSize, path, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
 }
 
 ScenarioResult scenario2_2(Dataset &dataset) {
@@ -85,7 +120,7 @@ ScenarioResult scenario2_3(Dataset &dataset) {
     Node destinationNode = nodes.at(nodes.size());
 
     std::pair<int, std::vector<int>> res = dataset.edmondsKarp(
-        startingNode.label, destinationNode.label);
+        startingNode.label, destinationNode.label, EdmondsKarpUsage::DEFAULT, 0);
     
     int maxFlow = res.first;
     parents = res.second;
@@ -101,7 +136,7 @@ ScenarioResult scenario2_3(Dataset &dataset) {
 
     auto tend = std::chrono::high_resolution_clock::now();
 
-    return {maxFlow, -1, path, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
+    return {maxFlow, -1, -1, path, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
 }
 
 ScenarioResult scenario2_4(Dataset &dataset) {

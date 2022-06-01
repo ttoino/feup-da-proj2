@@ -290,6 +290,7 @@ void UserInterface::allScenariosMenu() {
 void UserInterface::resultsMenu() {
     std::cout << "Flow = " << result.flow << "\n";
     std::cout << "Max Capacity = " << result.maxCapacity << "\n";
+    std::cout << "Group size = " << result.groupSize << "\n";
     std::cout << "Path: \n";
 
     std::vector<int> path = result.path;

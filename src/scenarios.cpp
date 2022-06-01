@@ -11,13 +11,24 @@
 #include "../includes/scenarios.hpp"
 #include "../includes/subscenarios.hpp"
 
-ScenarioResult::ScenarioResult(int flow, int maxCapacity, std::vector<int> path)
-    : flow(flow), maxCapacity(maxCapacity), path(path) {}
+ScenarioResult::ScenarioResult(int flow, int maxCapacity, std::vector<int> path, const std::chrono::microseconds &runtime)
+    : flow(flow), maxCapacity(maxCapacity), path(path), runtime(runtime)  {}
 
 std::string ScenarioResult::toCSV() const {
     std::stringstream out{};
 
-    out << runtime;
+    out << runtime << ',' << this->flow << ',' << this->maxCapacity;
+
+    if (!this->path.empty()) {
+        std::stringstream path_ss;
+        path_ss << "[";
+        for (int i = 0; i < this->path.size() - 1; ++i)
+            path_ss << this->path.at(i) << " -> ";
+
+        path_ss << *(this->path.end() - 1) << "]";
+
+        out << ',' << path_ss.str();
+    } else out << ",[]";
 
     return out.str();
 }
@@ -26,7 +37,7 @@ const ScenarioResult scenario1(Dataset &dataset,
                                Scenario1Strategy strat) {
 
 
-    ScenarioResult result = {-1, -1, std::vector<int>()};
+    ScenarioResult result = {-1, -1, std::vector<int>(), static_cast<std::chrono::microseconds>(0)};
 
     switch(strat) {
         case Scenario1Strategy::FIRST:
@@ -49,7 +60,7 @@ const ScenarioResult scenario2(Dataset &dataset,
                                Scenario2Strategy strat) {
     
 
-    ScenarioResult result = {-1, -1, std::vector<int>()};
+    ScenarioResult result = {-1, -1, std::vector<int>(), static_cast<std::chrono::microseconds>(0)};
     
     switch(strat) {
         case Scenario2Strategy::FIRST:

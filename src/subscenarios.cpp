@@ -2,6 +2,8 @@
 
 ScenarioResult scenario1_1(Dataset &dataset) {
 
+    auto tstart = std::chrono::high_resolution_clock::now();
+
     auto& nodes = dataset.getNodes();
 
     std::vector<int> capacities(static_cast<int>(nodes.size()) + 1, 0);
@@ -47,7 +49,9 @@ ScenarioResult scenario1_1(Dataset &dataset) {
     }
     path.insert(path.begin(), nodes.at(1).label);
 
-    return {-1, capacities[50], path};
+    auto tend = std::chrono::high_resolution_clock::now();
+
+    return {-1, capacities[50], path, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
 }
 
 ScenarioResult scenario1_2(Dataset &dataset) {
@@ -63,6 +67,9 @@ ScenarioResult scenario2_2(Dataset &dataset) {
 }
 
 ScenarioResult scenario2_3(Dataset &dataset) {
+
+    auto tstart = std::chrono::high_resolution_clock::now();
+
     std::vector<int> parent;
     std::vector<int> path;
 
@@ -73,7 +80,9 @@ ScenarioResult scenario2_3(Dataset &dataset) {
 
     int maxFlow = dataset.edmondsKarp(startingNode.label, destinationNode.label).first;
 
-    return {maxFlow, -1, path};
+    auto tend = std::chrono::high_resolution_clock::now();
+
+    return {maxFlow, -1, path, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
 }
 
 ScenarioResult scenario2_4(Dataset &dataset) {

@@ -14,7 +14,7 @@ const std::string OUTPUT_FILE = "output.csv";
 /**
  * @brief The header to be printed at the start of the scenario results.
  */
-const std::string OUTPUT_HEADER = "dataset,scenario,heuristic,runtime\n";
+const std::string OUTPUT_HEADER = "dataset,scenario,heuristic,runtime,maxFlow,maxCapacity,path\n";
 /**
  * @brief How many items to print in each page in UserInterface#paginatedMenu().
  */

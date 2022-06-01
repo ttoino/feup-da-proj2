@@ -40,14 +40,14 @@ struct ScenarioResult {
 /**
  * @brief Holds the possible strategies for scenario1().
  */
-ENUM(Scenario1Strategy, DEFAULT);
+ENUM(Scenario1Strategy, FIRST, SECOND);
 
 const ScenarioResult scenario1(Dataset &dataset, Scenario1Strategy strat);
 
 /**
  * @brief Holds the possible strategies for scenario2().
  */
-ENUM(Scenario2Strategy, DEFAULT);
+ENUM(Scenario2Strategy, FIRST, SECOND, THIRD, FOURTH, FIFTH);
 
 const ScenarioResult scenario2(Dataset &dataset, Scenario2Strategy strat);
 

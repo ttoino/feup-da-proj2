@@ -240,7 +240,9 @@ void UserInterface::generateDatasetMenu(Dataset &dataset) {
 void UserInterface::scenarioOneMenu(Dataset &dataset) {
     auto selection = optionsMenu<std::optional<Scenario1Strategy>>({
         {"Go back", {}},
-        {"Default strategy", Scenario1Strategy::DEFAULT},
+        {"First ", Scenario1Strategy::FIRST},
+        {"Second ", Scenario1Strategy::SECOND},
+        {}
     });
 
     if (!selection.has_value()) // Error while getting option
@@ -259,7 +261,11 @@ void UserInterface::scenarioOneMenu(Dataset &dataset) {
 void UserInterface::scenarioTwoMenu(Dataset &dataset) {
     auto selection = optionsMenu<std::optional<Scenario2Strategy>>({
         {"Go back", {}},
-        {"Default strategy", Scenario2Strategy::DEFAULT},
+        {"First", Scenario2Strategy::FIRST},
+        {"Second", Scenario2Strategy::SECOND},
+        {"Third", Scenario2Strategy::THIRD},
+        {"Fourth", Scenario2Strategy::FOURTH},
+        {"Fifth", Scenario2Strategy::FIFTH},
     });
 
     if (!selection.has_value()) // Error while getting option

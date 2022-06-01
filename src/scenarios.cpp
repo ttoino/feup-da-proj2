@@ -9,6 +9,7 @@
 
 #include "../includes/constants.hpp"
 #include "../includes/scenarios.hpp"
+#include "../includes/subscenarios.hpp"
 
 ScenarioResult::ScenarioResult(int flow, int maxCapacity, std::vector<int> path)
     : flow(flow), maxCapacity(maxCapacity), path(path) {}
@@ -24,67 +25,52 @@ std::string ScenarioResult::toCSV() const {
 const ScenarioResult scenario1(Dataset &dataset,
                                Scenario1Strategy strat) {
 
-    auto& nodes = dataset.getNodes();
 
-    std::vector<int> capacities(static_cast<int>(nodes.size()) + 1, 0);
-    std::set<std::pair<int /* capacity */, int /* node */>, std::greater<std::pair<int, int>>> capacitiesHeap;
+    ScenarioResult result = {-1, -1, std::vector<int>()};
 
-    for (auto& [index, node] : nodes) {
-        capacitiesHeap.insert({0, index});
-        capacities.at(index) = 0;
-        node.parent = -1;
+    switch(strat) {
+        case Scenario1Strategy::FIRST:
+            result = scenario1_1(dataset); 
+            break;
+
+        case Scenario1Strategy::SECOND:
+            //TODO
+            break;
+
+        default:
+            break;
     }
 
-    capacitiesHeap.erase({0, 1});
-    capacitiesHeap.insert({INF, 1});
-    capacities.at(1) = INF;
-    nodes[1].parent = 1;
-
-    while (!capacitiesHeap.empty()) {
-
-        int v = capacitiesHeap.extract(capacitiesHeap.begin()).value().second;
-
-        auto& orig = nodes.at(v);
-
-        for (auto& edge : orig.adj) {
-            auto& w = edge.dest;
-
-            if (std::min(capacities[v], edge.capacity) > capacities[w]) {
-
-                capacitiesHeap.erase({capacities[w], w});
-                capacities[w] = std::min(capacities[v], edge.capacity);
-                nodes.at(w).parent = v;
-                capacitiesHeap.insert({capacities[w], w});
-            }
-        }
-    }
-
-    int node = nodes.at(nodes.size()).label;
-    std::vector<int> path;
-
-    while(node != nodes.at(1).label) {
-        path.insert(path.begin(), node);
-        node = nodes.at(node).parent;
-    }
-    path.insert(path.begin(), nodes.at(1).label);
-
-    return {-1, capacities[50], path};
 }
 
 const ScenarioResult scenario2(Dataset &dataset,
                                Scenario2Strategy strat) {
     
 
-    std::vector<int> path;
-
-    auto& nodes = dataset.getNodes();
+    ScenarioResult result = {-1, -1, std::vector<int>()};
     
-    Node startingNode = nodes.at(1);
-    Node destinationNode = nodes.at(nodes.size());
+    switch(strat) {
+        case Scenario2Strategy::FIRST:
+            //TODO
+            break;
+        case Scenario2Strategy::SECOND:
+            //TODO
+            break;
+        case Scenario2Strategy::THIRD:
+            result = scenario2_3(dataset);
+            break;
+        case Scenario2Strategy::FOURTH:
+            //TODO
+            break;
+        case Scenario2Strategy::FIFTH:
+            //TODO
+            break;
 
-    int maxFlow = dataset.edmondsKarp(startingNode.label, destinationNode.label).first;
+        default:
+            break;
+    }
 
-    return {maxFlow, -1, path};
+    return result;
 }
 
 void runAllScenarios() {

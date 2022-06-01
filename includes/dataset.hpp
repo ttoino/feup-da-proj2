@@ -148,7 +148,7 @@ public:
     *
     * @return The max flow from s to t
     */
-    int edmondsKarp(int s, int t);
+    std::pair<int, std::vector<int>> edmondsKarp(int s, int t);
 };
 
 #endif

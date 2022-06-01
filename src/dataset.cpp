@@ -92,14 +92,13 @@ int Dataset::bfs(int s, int t, std::vector<int>* parent) {
         q.pop();
 
         for (Edge next : nodes.at(cur).adj) {
-            int dest  = next.dest;
+            int dest = next.dest;
 
             if (parent->at(dest) == -1 && cap.at(cur).at(dest) > 0) {
                 parent->at(dest) = cur;
                 int new_flow = std::min(flow, cap.at(cur).at(dest));
 
                 if (dest == t) {
-                    std::cout << "new_flow = " << new_flow << std::endl;
                     return new_flow;
                 }
                     
@@ -112,7 +111,7 @@ int Dataset::bfs(int s, int t, std::vector<int>* parent) {
   return 0;
 }
 
-int Dataset::edmondsKarp(int s, int t) {
+std::pair<int, std::vector<int>> Dataset::edmondsKarp(int s, int t) {
     
     int flow = 0;
     std::vector<int> parent(nodes.size() + 1);
@@ -135,5 +134,5 @@ int Dataset::edmondsKarp(int s, int t) {
         }
     }
 
-    return flow;
+    return {flow, parent};
 }

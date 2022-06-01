@@ -62,7 +62,7 @@ class UserInterface {
     /**
      * @brief The result that is shown in resultsMenu() and resultsVansMenu().
      */
-    ScenarioResult result = {-1, -1};
+    ScenarioResult result = {-1, -1, std::vector<int>()};
 
     /**
      * @brief Helper method to show a menu with options.

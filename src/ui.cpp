@@ -252,6 +252,7 @@ void UserInterface::scenarioOneMenu(Dataset &dataset) {
     }
 
     result = scenario1(dataset, selection.value().value());
+
     currentMenu = Menu::RESULTS;
 }
 
@@ -282,7 +283,17 @@ void UserInterface::allScenariosMenu() {
 
 void UserInterface::resultsMenu() {
     std::cout << "Flow = " << result.flow << "\n";
-    std::cout << "Max Capacity = " << result.maxCapacity << "\n\n";
+    std::cout << "Max Capacity = " << result.maxCapacity << "\n";
+    std::cout << "Path: \n";
+
+    std::vector<int> path = result.path;
+
+    for(unsigned i = 0; i < path.size(); ++i) {
+        if(i < path.size() - 1)
+            std::cout << path.at(i) << " > ";
+        else
+         std::cout << path.at(i) << std::endl;
+    }
 
     auto menu = optionsMenu<Menu>({
         {"Continue", Menu::MAIN},

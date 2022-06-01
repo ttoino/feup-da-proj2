@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <fstream>
 #include <queue>
+#include <list>
 
 #include "../includes/constants.hpp"
 #include "../includes/dataset.hpp"
@@ -82,7 +83,7 @@ void Dataset::addEdge(const int src, const int &dest, const int capacity,
     cap.at(src).at(dest) = capacity;
 }
 
-int Dataset::bfs(int s, int t, std::vector<int>* parent) {
+int Dataset::EK_bfs(int s, int t, std::vector<int>* parent) {
 
     for (unsigned i = 1; i <= nodes.size(); i++) 
         parent->at(i) = -1;
@@ -108,7 +109,6 @@ int Dataset::bfs(int s, int t, std::vector<int>* parent) {
                     return new_flow;
                 }
                     
-
                 q.push({dest, new_flow});
             }
         }
@@ -123,7 +123,7 @@ std::pair<int, std::vector<int>> Dataset::edmondsKarp(int s, int t) {
     std::vector<int> parent(nodes.size() + 1);
 
     while (true) {
-        int new_flow = bfs(s, t, &parent);
+        int new_flow = EK_bfs(s, t, &parent);
         
         if (new_flow == 0) 
             break;            
@@ -141,4 +141,71 @@ std::pair<int, std::vector<int>> Dataset::edmondsKarp(int s, int t) {
     }
 
     return {flow, parent};
+}
+
+std::pair<int, std::vector<int>> Dataset::BFS(int s, int t) {
+
+    std::list<int> path_list;
+
+    this->visitedFalse();
+
+    std::queue<std::pair<int ,int>> q; // queue of unvisited nodes with distance to s
+    q.push({s, 0});
+    nodes[s].visited = true;
+    nodes[s].parent = s;
+    int nStops = -1;
+    while (!q.empty()) { // while there are still unvisited nodes
+        int u = q.front().first;
+        int u1 = q.front().second; q.pop();
+
+        auto& node = nodes[u];
+
+        bool toBreak = false;
+
+        for (const auto& e : node.adj) {
+
+            int w = e.dest;
+
+            if (!nodes[w].visited) {
+                q.push({w, u1 + 1});
+                nodes[w].visited = true;
+                nodes[w].parent = u;
+
+                if (w == t) {
+                    toBreak = true;
+                    break;
+                }
+            }
+        }
+
+        if (toBreak) break;
+    }
+
+    int cur = t;
+    int maxCap = INT_MIN;
+
+    while (cur != s) {
+        int prev = nodes[cur].parent;
+        path_list.emplace_front(cur);
+
+        auto prevNodeEdges = this->getNode(prev).adj;
+
+        int edgeCap = std::find_if(prevNodeEdges.begin(), prevNodeEdges.end(), [&cur](const Edge& e) -> bool { return e.dest == cur; })->capacity;
+
+        if (edgeCap > maxCap) maxCap = edgeCap;
+
+        cur = prev;
+    }
+    path_list.emplace_front(s);
+
+    auto path = std::vector<int>(path_list.begin(), path_list.end());
+
+    return {maxCap, path};
+}
+
+void Dataset::visitedFalse() {
+    for (auto& [index, node] : nodes) {
+        node.visited = false;
+        node.parent = -1;
+    }
 }

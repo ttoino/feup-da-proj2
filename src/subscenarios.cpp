@@ -9,7 +9,6 @@ ScenarioResult scenario1_1(Dataset &dataset) {
     std::vector<int> capacities(static_cast<int>(nodes.size()) + 1, 0);
     std::set<std::pair<int /* capacity */, int /* node */>, std::greater<std::pair<int, int>>> capacitiesHeap;
 
-
     for (auto& [index, node] : nodes) {
         capacitiesHeap.insert({0, index});
         capacities.at(index) = 0;
@@ -51,11 +50,18 @@ ScenarioResult scenario1_1(Dataset &dataset) {
 
     auto tend = std::chrono::high_resolution_clock::now();
 
-    return {-1, capacities[50], path, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
+    return {-1, capacities[nodes.size()], path, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
 }
 
 ScenarioResult scenario1_2(Dataset &dataset) {
-    //TODO
+
+    auto tstart = std::chrono::high_resolution_clock::now();
+    
+    auto results = dataset.BFS(1, dataset.getNodes().size());
+
+    auto tend = std::chrono::high_resolution_clock::now();
+
+    return {-1, results.first, results.second, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
 }
 
 ScenarioResult scenario2_1(Dataset &dataset) {

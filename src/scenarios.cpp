@@ -45,7 +45,7 @@ const ScenarioResult scenario1(Dataset &dataset,
             break;
 
         case Scenario1Strategy::SECOND:
-            //TODO
+            result = scenario1_2(dataset);
             break;
 
         default:

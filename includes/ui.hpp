@@ -62,7 +62,7 @@ class UserInterface {
     /**
      * @brief The result that is shown in resultsMenu() and resultsVansMenu().
      */
-    ScenarioResult result{{}};
+    ScenarioResult result = {-1, -1};
 
     /**
      * @brief Helper method to show a menu with options.

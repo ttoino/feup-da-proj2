@@ -17,7 +17,7 @@ struct ScenarioResult {
 
     /** @brief How much time the algorithm took to run. */
     std::chrono::microseconds runtime{0};
-    int flow;
+    int flow = -1, maxCapacity = -1;
 
     /**
      * @brief Creates a scenario result from the given params.
@@ -26,7 +26,7 @@ struct ScenarioResult {
      * @param vans The vans that were used.
      * @param runtime How much time the algorithm took to run.
      */
-    ScenarioResult(int flow);
+    ScenarioResult(int flow, int maxCapacity);
 
     /**
      * @brief Converts this object to a csv representation.

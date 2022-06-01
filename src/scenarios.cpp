@@ -10,13 +10,13 @@
 #include "../includes/constants.hpp"
 #include "../includes/scenarios.hpp"
 
-ScenarioResult::ScenarioResult(int flow)
-    : flow(flow) {}
+ScenarioResult::ScenarioResult(int flow, int maxCapacity)
+    : flow(flow), maxCapacity(maxCapacity) {}
 
 std::string ScenarioResult::toCSV() const {
     std::stringstream out{};
 
-    out << runtime.count();
+    out << runtime;
 
     return out.str();
 }
@@ -26,7 +26,7 @@ const ScenarioResult scenario1(Dataset &dataset,
 
     auto& nodes = dataset.getNodes();
 
-    std::vector<int> capacities{static_cast<int>(nodes.size()) + 1, 0};
+    std::vector<int> capacities(static_cast<int>(nodes.size()) + 1, 0);
     std::set<std::pair<int /* capacity */, int /* node */>, std::greater<std::pair<int, int>>> capacitiesHeap;
 
     for (auto& [index, node] : nodes) {
@@ -59,7 +59,7 @@ const ScenarioResult scenario1(Dataset &dataset,
         }
     }
 
-    return {{}};
+    return {-1, capacities[50]};
 }
 
 const ScenarioResult scenario2(Dataset &dataset,
@@ -75,7 +75,7 @@ const ScenarioResult scenario2(Dataset &dataset,
 
     int maxFlow = dataset.edmondsKarp(startingNode.label, destinationNode.label);
 
-    return {maxFlow};
+    return {maxFlow, -1};
 }
 
 void runAllScenarios() {

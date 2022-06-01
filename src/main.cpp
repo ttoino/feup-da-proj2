@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
 
     UserInterface ui{};
 
-    Dataset dataset = Dataset::load("default");
+    Dataset dataset = Dataset::load("in01.txt");
 
     try {
         while (true)

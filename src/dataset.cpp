@@ -221,7 +221,7 @@ std::pair<int, std::list<int>> Dataset::BFS(int s, int t) {
     }
 
     int cur = t;
-    int maxCap = INT_MIN;
+    int minCap = INT_MAX;
 
     while (cur != s) {
         int prev = nodes[cur].parent;
@@ -231,7 +231,7 @@ std::pair<int, std::list<int>> Dataset::BFS(int s, int t) {
 
         int edgeCap = std::find_if(prevNodeEdges.begin(), prevNodeEdges.end(), [&cur](const Edge& e) -> bool { return e.dest == cur; })->capacity;
 
-        if (edgeCap > maxCap) maxCap = edgeCap;
+        if (edgeCap < minCap) minCap = edgeCap;
 
         cur = prev;
     }
@@ -239,7 +239,7 @@ std::pair<int, std::list<int>> Dataset::BFS(int s, int t) {
 
     auto path = std::list<int>(path_list.begin(), path_list.end());
 
-    return {maxCap, path};
+    return {minCap, path};
 }
 
 void Dataset::visitedFalse() {

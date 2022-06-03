@@ -17,7 +17,7 @@ ScenarioResult::ScenarioResult(int flow, int maxCapacity, int groupSize,
 
 std::string ScenarioResult::toCSV() const {
     std::stringstream out{};
-    std::list<int> path = paths.at(0);
+    std::list<int> path = paths.empty() ? std::list<int>() : paths.at(0);
     auto front = path.begin();
 
     out << "runtime" << ',' << this->flow << ',' << this->maxCapacity;

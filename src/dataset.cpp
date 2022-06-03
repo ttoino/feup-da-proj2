@@ -8,13 +8,7 @@
 #include "../includes/dataset.hpp"
 #include "../includes/utils.hpp"
 
-Dataset::Dataset(const unsigned int n) {
-    for (int i = 1; i <= n; ++i)
-        nodes.insert({i, {i}});
-    residualGraph.resize(nodes.size() + 1, std::vector<int>(nodes.size() + 1));
-}
-
-Dataset::Dataset() {}
+Dataset::Dataset(const Graph& graph): network(graph) {}
 
 Dataset Dataset::load(const std::string &path) {
 
@@ -37,17 +31,23 @@ Dataset Dataset::load(const std::string &path) {
     unsigned int n = stoul(tokens[0]);
     unsigned int t = stoul(tokens[1]);
 
-    Dataset result{n};
+    Graph result{n};
+
+    std::vector<std::vector<int>> residualGraphCopy(n + 1, std::vector<int>(n + 1));
 
     for (int i = 0; i < t; ++i) {
         std::getline(dataset_file, line);
         tokens = split(line, ' ');
 
-        result.addEdge(stoul(tokens[0]), stoul(tokens[1]), stoul(tokens[2]),
-                       stoul(tokens[3]));
+        int src = stoul(tokens[0]), dest = stoul(tokens[1]), capacity = stoul(tokens[2]), duration = stoul(tokens[3]);
+
+        result.addEdge(src, dest, capacity, duration);
+        residualGraphCopy.at(src).at(dest) = capacity;
     }
 
-    return result;
+    Dataset dataset{result};
+    dataset.residualGraph = residualGraphCopy;
+    return dataset;
 }
 
 Dataset Dataset::generate(const std::string &name,
@@ -70,30 +70,19 @@ std::vector<std::string> Dataset::getAvailableDatasets() {
     return result;
 }
 
-// Add edge from source to destination with a certain weight
-void Dataset::addEdge(Node &src, Node &dest, const int capacity,
-                      const int duration) {
-    src.adj.insert({dest.label, capacity, duration});
-}
-
-// Add edge from source to destination with a certain weight
-void Dataset::addEdge(const int src, const int &dest, const int capacity,
-                      const int duration) {
-    addEdge(nodes[src], nodes[dest], capacity, duration);
-    residualGraph.at(src).at(dest) = capacity;
-}
-
 std::pair<int, std::list<int>> Dataset::EK_bfs(
-    int s, int t, std::vector<int>* parent,
-    std::vector<std::vector<int>>* residualGraph
+    int s, int t, std::vector<int>& parent,
+    std::vector<std::vector<int>>& residualGraph
     ) {
 
     std::list<int> path;
 
-    for (unsigned i = 1; i <= nodes.size(); i++) 
-        parent->at(i) = -1;
+    auto& nodes = this->network.getNodes();
 
-    parent->at(s) = -2;         
+    for (unsigned i = 1; i <= nodes.size(); i++) 
+        parent.at(i) = -1;
+
+    parent.at(s) = -2;         
     std::queue<std::pair<int, int>> q;
     q.push({s, INT_MAX});
 
@@ -106,13 +95,13 @@ std::pair<int, std::list<int>> Dataset::EK_bfs(
         for (Edge next : nodes.at(cur).adj) {
             int dest = next.dest;
 
-            if (parent->at(dest) == -1 && residualGraph->at(cur).at(dest) > 0) {
-                parent->at(dest) = cur;
+            if (parent.at(dest) == -1 && residualGraph.at(cur).at(dest) > 0) {
+                parent.at(dest) = cur;
                 path.emplace_back(dest);
-                int new_flow = std::min(flow, residualGraph->at(cur).at(dest));
+                int new_flow = std::min(flow, residualGraph.at(cur).at(dest));
 
                 if (dest == t) {
-                    return {new_flow, path };
+                    return {new_flow, path};
                 }
                     
                 q.push({dest, new_flow});
@@ -126,6 +115,8 @@ std::pair<int, std::list<int>> Dataset::EK_bfs(
 std::pair<int, std::vector<std::list<int>>> Dataset::edmondsKarp(
     int s, int t, EdmondsKarpUsage usage, int groupSize) {
     
+    auto& nodes = this->network.getNodes();
+
     int flow = 0, new_flow = 0;
     std::vector<int> parent(nodes.size() + 1);
     std::list<int> path;
@@ -135,7 +126,7 @@ std::pair<int, std::vector<std::list<int>>> Dataset::edmondsKarp(
 
     if(usage == EdmondsKarpUsage::DEFAULT) {
         while (true) {
-            bfsResult = EK_bfs(s, t, &parent, &residualGraph);
+            bfsResult = EK_bfs(s, t, parent, residualGraph);
             new_flow = bfsResult.first;
             path = bfsResult.second;
             
@@ -157,7 +148,7 @@ std::pair<int, std::vector<std::list<int>>> Dataset::edmondsKarp(
         }
     } else if (usage == EdmondsKarpUsage::CUSTOM) {
         while (flow < groupSize) {
-            bfsResult = EK_bfs(s, t, &parent, &residualGraph);
+            bfsResult = EK_bfs(s, t, parent, residualGraph);
             new_flow = bfsResult.first;
             path = bfsResult.second;
 
@@ -180,71 +171,4 @@ std::pair<int, std::vector<std::list<int>>> Dataset::edmondsKarp(
     }
 
     return { flow, paths };
-}
-
-std::pair<int, std::list<int>> Dataset::BFS(int s, int t) {
-
-    std::list<int> path_list;
-
-    this->visitedFalse();
-
-    std::queue<std::pair<int ,int>> q; // queue of unvisited nodes with distance to s
-    q.push({s, 0});
-    nodes[s].visited = true;
-    nodes[s].parent = s;
-    int nStops = -1;
-    while (!q.empty()) { // while there are still unvisited nodes
-        int u = q.front().first;
-        int u1 = q.front().second; q.pop();
-
-        auto& node = nodes[u];
-
-        bool toBreak = false;
-
-        for (const auto& e : node.adj) {
-
-            int w = e.dest;
-
-            if (!nodes[w].visited) {
-                q.push({w, u1 + 1});
-                nodes[w].visited = true;
-                nodes[w].parent = u;
-
-                if (w == t) {
-                    toBreak = true;
-                    break;
-                }
-            }
-        }
-
-        if (toBreak) break;
-    }
-
-    int cur = t;
-    int minCap = INT_MAX;
-
-    while (cur != s) {
-        int prev = nodes[cur].parent;
-        path_list.emplace_front(cur);
-
-        auto prevNodeEdges = this->getNode(prev).adj;
-
-        int edgeCap = std::find_if(prevNodeEdges.begin(), prevNodeEdges.end(), [&cur](const Edge& e) -> bool { return e.dest == cur; })->capacity;
-
-        if (edgeCap < minCap) minCap = edgeCap;
-
-        cur = prev;
-    }
-    path_list.emplace_front(s);
-
-    auto path = std::list<int>(path_list.begin(), path_list.end());
-
-    return {minCap, path};
-}
-
-void Dataset::visitedFalse() {
-    for (auto& [index, node] : nodes) {
-        node.visited = false;
-        node.parent = -1;
-    }
 }

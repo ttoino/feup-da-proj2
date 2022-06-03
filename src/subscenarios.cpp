@@ -6,7 +6,7 @@ ScenarioResult scenario1_1(Dataset &dataset) {
 
     auto tstart = std::chrono::high_resolution_clock::now();
 
-    auto& nodes = dataset.getNodes();
+    auto& nodes = dataset.getGraph().getNodes();
 
     std::vector<int> capacities(static_cast<int>(nodes.size()) + 1, 0);
     std::set<std::pair<int /* capacity */, int /* node */>, std::greater<std::pair<int, int>>> capacitiesHeap;
@@ -63,7 +63,7 @@ ScenarioResult scenario1_2(Dataset &dataset) {
 
     std::vector<std::list<int>> paths;
     
-    auto results = dataset.BFS(1, dataset.getNodes().size());
+    auto results = dataset.getGraph().BFS(1, dataset.getGraph().getNodes().size());
     paths.push_back(results.second);
 
     auto tend = std::chrono::high_resolution_clock::now();
@@ -78,7 +78,7 @@ ScenarioResult scenario2_1(Dataset &dataset) {
     
     std::vector<std::list<int>> paths;
 
-    auto& nodes = dataset.getNodes();
+    auto& nodes = dataset.getGraph().getNodes();
     EdmondsKarpUsage usage = EdmondsKarpUsage::CUSTOM;
     
     Node startingNode = nodes.at(1);
@@ -110,7 +110,7 @@ ScenarioResult scenario2_3(Dataset &dataset) {
 
     std::vector<std::list<int>> paths;
 
-    auto& nodes = dataset.getNodes();
+    auto& nodes = dataset.getGraph().getNodes();
     
     Node startingNode = nodes.at(1);
     Node destinationNode = nodes.at(nodes.size());
@@ -131,7 +131,9 @@ ScenarioResult scenario2_4(Dataset &dataset) {
     /* TODO: have a path-finding algorithm find a suitable path for a given group size 
      and make it so this algorithm only takes into account those nodes that constitute said path */
 
-    auto nodes = dataset.getNodes();
+    scenario2_1(dataset);
+
+    auto nodes = dataset.getGraph().getNodes();
 
     std::vector<int> earliestStart(static_cast<int>(nodes.size()) + 1, 0);
     std::vector<int> entryDegree(static_cast<int>(nodes.size()) + 1, 0);

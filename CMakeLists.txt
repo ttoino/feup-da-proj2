@@ -13,7 +13,8 @@ add_executable(da_proj2
                src/utils.cpp
                src/dataset.cpp
                src/scenarios.cpp
-               src/subscenarios.cpp)
+               src/subscenarios.cpp
+               src/graph.cpp)
 
 add_executable(da_proj2_no_ansi
                 src/main.cpp
@@ -21,7 +22,8 @@ add_executable(da_proj2_no_ansi
                 src/utils.cpp
                 src/dataset.cpp
                 src/scenarios.cpp
-                src/subscenarios.cpp)
+                src/subscenarios.cpp
+                src/graph.cpp)
 target_compile_definitions(da_proj2_no_ansi PUBLIC NO_ANSI)
 
 include_directories(da_proj2 includes/)

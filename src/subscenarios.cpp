@@ -1,3 +1,5 @@
+#include <queue>
+
 #include "../includes/subscenarios.hpp"
 
 ScenarioResult scenario1_1(Dataset &dataset) {
@@ -50,7 +52,7 @@ ScenarioResult scenario1_1(Dataset &dataset) {
 
     auto tend = std::chrono::high_resolution_clock::now();
 
-    return {-1, capacities[nodes.size()], -1, path, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
+    return {-1, capacities[nodes.size()], -1, path, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart), -1};
 }
 
 ScenarioResult scenario1_2(Dataset &dataset) {
@@ -61,7 +63,7 @@ ScenarioResult scenario1_2(Dataset &dataset) {
 
     auto tend = std::chrono::high_resolution_clock::now();
 
-    return {-1, results.first, -1, results.second, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
+    return {-1, results.first, -1, results.second, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart), -1};
 }
 
 ScenarioResult scenario2_1(Dataset &dataset) {
@@ -100,7 +102,7 @@ ScenarioResult scenario2_1(Dataset &dataset) {
     
     auto tend = std::chrono::high_resolution_clock::now();
 
-    return {maxFlow, -1, groupSize, path, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
+    return {maxFlow, -1, groupSize, path, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart), -1};
 }
 
 ScenarioResult scenario2_2(Dataset &dataset) {
@@ -136,11 +138,57 @@ ScenarioResult scenario2_3(Dataset &dataset) {
 
     auto tend = std::chrono::high_resolution_clock::now();
 
-    return {maxFlow, -1, -1, path, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart)};
+    return {maxFlow, -1, -1, path, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart), -1};
 }
 
 ScenarioResult scenario2_4(Dataset &dataset) {
-    //TODO
+    
+    /* TODO: have a path-finding algorithm find a suitable path for a given group size 
+     and make it so this algorithm only takes into account those nodes that constitute said path */
+
+    auto nodes = dataset.getNodes();
+
+    std::vector<int> earliestStart(static_cast<int>(nodes.size()) + 1, 0);
+    std::vector<int> entryDegree(static_cast<int>(nodes.size()) + 1, 0);
+    int minDuration = -1, vf = -1;
+
+    for (const auto& [index, node] : nodes) {
+        for (const auto& edge : node.adj) {
+
+            int dest = edge.dest;
+
+            entryDegree[dest]++;
+        }
+    }
+
+    std::queue<int> s;
+    for (int v = 1; v <= nodes.size(); v++) {
+        if (entryDegree[v] == 0) {
+            s.push(v);
+        }
+    }
+
+    while (!s.empty()) {
+
+        int v = s.front(); s.pop();
+
+        if (minDuration < earliestStart[v]) 
+            minDuration = earliestStart[v];
+
+        auto node = nodes[v];
+
+        for (const auto& edge : node.adj) {
+
+            int w = edge.dest;
+
+            if (earliestStart[w] < earliestStart[v] + edge.duration)
+                earliestStart[w] = earliestStart[v] + edge.duration;
+
+            if (--entryDegree[w] == 0) s.push(w);
+        }
+    }
+
+    return {-1, -1, -1, {}, static_cast<std::chrono::microseconds>(0), minDuration};
 }
 
 ScenarioResult scenario2_5(Dataset &dataset) {

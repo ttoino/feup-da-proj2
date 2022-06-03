@@ -83,10 +83,12 @@ void Dataset::addEdge(const int src, const int &dest, const int capacity,
     residualGraph.at(src).at(dest) = capacity;
 }
 
-int Dataset::EK_bfs(
+std::pair<int, std::list<int>> Dataset::EK_bfs(
     int s, int t, std::vector<int>* parent,
     std::vector<std::vector<int>>* residualGraph
     ) {
+
+    std::list<int> path;
 
     for (unsigned i = 1; i <= nodes.size(); i++) 
         parent->at(i) = -1;
@@ -106,10 +108,11 @@ int Dataset::EK_bfs(
 
             if (parent->at(dest) == -1 && residualGraph->at(cur).at(dest) > 0) {
                 parent->at(dest) = cur;
+                path.emplace_back(dest);
                 int new_flow = std::min(flow, residualGraph->at(cur).at(dest));
 
                 if (dest == t) {
-                    return new_flow;
+                    return {new_flow, path };
                 }
                     
                 q.push({dest, new_flow});
@@ -117,25 +120,30 @@ int Dataset::EK_bfs(
         }
     }
 
-  return 0;
+  return { 0, std::list<int>() };
 }
 
-std::pair<int, std::vector<int>> Dataset::edmondsKarp(
+std::pair<int, std::vector<std::list<int>>> Dataset::edmondsKarp(
     int s, int t, EdmondsKarpUsage usage, int groupSize) {
     
     int flow = 0, new_flow = 0;
     std::vector<int> parent(nodes.size() + 1);
-    std::vector<int> path;
+    std::list<int> path;
+    std::vector<std::list<int>> paths;
+    std::pair<int, std::list<int>> bfsResult;
     std::vector<std::vector<int>> residualGraph = this->getCap();
 
     if(usage == EdmondsKarpUsage::DEFAULT) {
         while (true) {
-            new_flow = EK_bfs(s, t, &parent, &residualGraph);
+            bfsResult = EK_bfs(s, t, &parent, &residualGraph);
+            new_flow = bfsResult.first;
+            path = bfsResult.second;
             
             if (new_flow == 0) 
                 break;            
 
-            path = parent;
+            //path = parent;
+            paths.push_back(path);
             flow += new_flow;
             int cur = t;
 
@@ -149,12 +157,15 @@ std::pair<int, std::vector<int>> Dataset::edmondsKarp(
         }
     } else if (usage == EdmondsKarpUsage::CUSTOM) {
         while (flow < groupSize) {
-            new_flow = EK_bfs(s, t, &parent, &residualGraph);
-            
+            bfsResult = EK_bfs(s, t, &parent, &residualGraph);
+            new_flow = bfsResult.first;
+            path = bfsResult.second;
+
             if (new_flow == 0) 
                 break;            
 
-            path = parent;
+            //path = parent;
+            paths.push_back(path);
             flow += new_flow;
             int cur = t;
 
@@ -168,10 +179,10 @@ std::pair<int, std::vector<int>> Dataset::edmondsKarp(
         }        
     }
 
-    return { flow, path };
+    return { flow, paths };
 }
 
-std::pair<int, std::vector<int>> Dataset::BFS(int s, int t) {
+std::pair<int, std::list<int>> Dataset::BFS(int s, int t) {
 
     std::list<int> path_list;
 
@@ -226,7 +237,7 @@ std::pair<int, std::vector<int>> Dataset::BFS(int s, int t) {
     }
     path_list.emplace_front(s);
 
-    auto path = std::vector<int>(path_list.begin(), path_list.end());
+    auto path = std::list<int>(path_list.begin(), path_list.end());
 
     return {maxCap, path};
 }

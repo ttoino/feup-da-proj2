@@ -17,7 +17,7 @@ struct ScenarioResult {
 
     /** @brief How much time the algorithm took to run. */
     std::chrono::microseconds runtime{0};
-    std::vector<int> path = {};
+    std::vector<std::list<int>> paths = {};
     int flow = -1, maxCapacity = -1, groupSize = -1, minDuration = -1;
 
     /**
@@ -28,7 +28,7 @@ struct ScenarioResult {
      * @param runtime How much time the algorithm took to run.
      */
     ScenarioResult(int flow, int maxCapacity, 
-        int groupSize, std::vector<int> path, const std::chrono::microseconds &runtime, int minDuration);
+        int groupSize, std::vector<std::list<int>> paths, const std::chrono::microseconds &runtime, int minDuration);
 
     /**
      * @brief Converts this object to a csv representation.

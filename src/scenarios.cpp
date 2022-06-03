@@ -12,21 +12,26 @@
 #include "../includes/subscenarios.hpp"
 
 ScenarioResult::ScenarioResult(int flow, int maxCapacity, int groupSize,
-    std::vector<int> path, const std::chrono::microseconds &runtime, int minDuration)
-    : flow(flow), maxCapacity(maxCapacity), groupSize(groupSize), path(path), runtime(runtime), minDuration(minDuration)  {}
+    std::vector<std::list<int>> paths, const std::chrono::microseconds &runtime, int minDuration)
+    : flow(flow), maxCapacity(maxCapacity), groupSize(groupSize), paths(paths), runtime(runtime), minDuration(minDuration)  {}
 
 std::string ScenarioResult::toCSV() const {
     std::stringstream out{};
+    std::list<int> path = paths.at(0);
+    auto front = path.begin();
 
     out << "runtime" << ',' << this->flow << ',' << this->maxCapacity;
 
-    if (!this->path.empty()) {
+    if (!path.empty()) {
         std::stringstream path_ss;
         path_ss << "[";
-        for (int i = 0; i < this->path.size() - 1; ++i)
-            path_ss << this->path.at(i) << " -> ";
+        for (int i = 0; i < path.size() - 1; ++i) {
+            std::advance(front, i);
+            path_ss << *front << " -> ";
+        }
+            
 
-        path_ss << *(this->path.end() - 1) << "]";
+        path_ss << path.back() << "]";
 
         out << ',' << path_ss.str();
     } else out << ",[]";
@@ -40,7 +45,7 @@ const ScenarioResult scenario1(Dataset &dataset,
                                Scenario1Strategy strat) {
 
 
-    ScenarioResult result = {-1, -1, -1, std::vector<int>(), static_cast<std::chrono::microseconds>(0), -1};
+    ScenarioResult result = {-1, -1, -1, std::vector<std::list<int>>(), static_cast<std::chrono::microseconds>(0), -1};
 
     switch(strat) {
         case Scenario1Strategy::FIRST:
@@ -63,7 +68,7 @@ const ScenarioResult scenario2(Dataset &dataset,
                                Scenario2Strategy strat) {
     
 
-    ScenarioResult result = {-1, -1, -1, std::vector<int>(), static_cast<std::chrono::microseconds>(0), -1};
+    ScenarioResult result = {-1, -1, -1, std::vector<std::list<int>>(), static_cast<std::chrono::microseconds>(0), -1};
     
     switch(strat) {
         case Scenario2Strategy::FIRST:

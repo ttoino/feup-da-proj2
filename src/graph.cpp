@@ -82,3 +82,12 @@ void Graph::visitedFalse() {
         node.parent = -1;
     }
 }
+
+void Graph::addNode(int i) {
+    this->nodes.insert({i, {i}});
+}
+
+void Graph::addNode(int i, const Node& node) {
+    this->nodes.insert({i, node});
+}
+

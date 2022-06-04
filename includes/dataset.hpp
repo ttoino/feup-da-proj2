@@ -35,15 +35,13 @@ enum EdmondsKarpUsage {
  */
 class Dataset {
 
-    Graph network;
+    Graph network, path;
 
     /**
      * @brief This graph's residual graph in a matrix
      * 
      */
     std::vector<std::vector<int>> residualGraph;
-
-    // TODO
 
     Dataset(const Graph& graph);
     Dataset() {};
@@ -63,6 +61,7 @@ class Dataset {
 public:
 
     Graph& getGraph() { return network; }
+    Graph& getPath() { return path; }
 
     /**
      * @brief Loads a dataset from the given path.

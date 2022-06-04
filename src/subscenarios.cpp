@@ -1,4 +1,5 @@
 #include <queue>
+#include <unordered_map>
 
 #include "../includes/subscenarios.hpp"
 
@@ -133,13 +134,15 @@ ScenarioResult scenario2_4(Dataset &dataset) {
 
     scenario2_1(dataset);
 
-    auto nodes = dataset.getGraph().getNodes();
+    auto nodes = dataset.getPath().getNodes();
 
-    std::vector<int> earliestStart(static_cast<int>(nodes.size()) + 1, 0);
-    std::vector<int> entryDegree(static_cast<int>(nodes.size()) + 1, 0);
-    int minDuration = -1, vf = -1;
+    std::unordered_map<int, int> earliestStart;
+    std::unordered_map<int, int> entryDegree;
+    int minDuration = -1;
 
     for (const auto& [index, node] : nodes) {
+        entryDegree[index] += 0; // just to guarantee that nodes with degree 0 are added too
+        earliestStart[index] = 0;
         for (const auto& edge : node.adj) {
 
             int dest = edge.dest;
@@ -149,10 +152,10 @@ ScenarioResult scenario2_4(Dataset &dataset) {
     }
 
     std::queue<int> s;
-    for (int v = 1; v <= nodes.size(); v++) {
-        if (entryDegree[v] == 0) {
-            s.push(v);
-        }
+
+    for (const auto &[index, degree] : entryDegree) {
+        if (degree == 0)
+            s.push(index);
     }
 
     while (!s.empty()) {
@@ -162,9 +165,9 @@ ScenarioResult scenario2_4(Dataset &dataset) {
         if (minDuration < earliestStart[v]) 
             minDuration = earliestStart[v];
 
-        auto node = nodes[v];
+        auto node = nodes.find(v);
 
-        for (const auto& edge : node.adj) {
+        for (const auto& edge : node->second.adj) {
 
             int w = edge.dest;
 
@@ -179,5 +182,7 @@ ScenarioResult scenario2_4(Dataset &dataset) {
 }
 
 ScenarioResult scenario2_5(Dataset &dataset) {
-    //TOD
+    //TODO
+
+    // one can adapt 2.4 to calculate the difference in the middle of the algorithm
 }

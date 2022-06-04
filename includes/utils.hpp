@@ -13,21 +13,20 @@
  * @param ... The enumerators
  */
 #define ENUM(name, ...)                                                        \
-    enum class name { /**                                                      \
-                      @brief Special enumerator that marks the beginning of    \
-                      the enum.                                                \
-                                                                               \
-                      @warning Should not be used as an actual value.          \
-                      */                                                       \
-                      BEGIN,                                                   \
-                      __VA_ARGS__, /**                                         \
-                                   @brief Special enumerator that marks the    \
-                                   end of the enum.                            \
-                                                                               \
-                                   @warning Should not be used as an actual    \
-                                   value.                                      \
-                                   */                                          \
-                      END,                                                     \
+    enum class name {                                                          \
+        /**                                                                    \
+         * @brief Special enumerator that marks the beginning of the enum.     \
+         *                                                                     \
+         * @warning Should not be used as an actual value.                     \
+         */                                                                    \
+        BEGIN,                                                                 \
+        __VA_ARGS__,                                                           \
+        /**                                                                    \
+         * @brief Special enumerator that marks the end of the enum.           \
+         *                                                                     \
+         * @warning Should not be used as an actual value.                     \
+         */                                                                    \
+        END,                                                                   \
     }
 
 /**

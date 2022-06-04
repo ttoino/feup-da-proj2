@@ -240,9 +240,8 @@ void UserInterface::generateDatasetMenu(Dataset &dataset) {
 void UserInterface::scenarioOneMenu(Dataset &dataset) {
     auto selection = optionsMenu<std::optional<Scenario1Strategy>>({
         {"Go back", {}},
-        {"First ", Scenario1Strategy::FIRST},
-        {"Second ", Scenario1Strategy::SECOND},
-        {}
+        {"Maximize group size", Scenario1Strategy::FIRST},
+        {"Minimize connections", Scenario1Strategy::SECOND},
     });
 
     if (!selection.has_value()) // Error while getting option
@@ -261,11 +260,11 @@ void UserInterface::scenarioOneMenu(Dataset &dataset) {
 void UserInterface::scenarioTwoMenu(Dataset &dataset) {
     auto selection = optionsMenu<std::optional<Scenario2Strategy>>({
         {"Go back", {}},
-        {"First", Scenario2Strategy::FIRST},
-        {"Second", Scenario2Strategy::SECOND},
-        {"Third", Scenario2Strategy::THIRD},
-        {"Fourth", Scenario2Strategy::FOURTH},
-        {"Fifth", Scenario2Strategy::FIFTH},
+        {"Find path from group size", Scenario2Strategy::FIRST},
+        {"Increase group size", Scenario2Strategy::SECOND},
+        {"Find maximum group size and its path", Scenario2Strategy::THIRD},
+        {"Find earliest end time", Scenario2Strategy::FOURTH},
+        {"Find maximum wait time", Scenario2Strategy::FIFTH},
     });
 
     if (!selection.has_value()) // Error while getting option
@@ -288,28 +287,33 @@ void UserInterface::allScenariosMenu() {
 }
 
 void UserInterface::resultsMenu() {
-    std::cout << "Flow = " << result.flow << "\n";
-    std::cout << "Max Capacity = " << result.maxCapacity << "\n";
-    std::cout << "Group size = " << result.groupSize << "\n";
-    std::cout << "Minimum duration = " << result.minDuration << "\n";
+    if (result.flow != -1)
+        std::cout << "Flow: " << result.flow << "\n";
+    if (result.maxCapacity != -1)
+        std::cout << "Max capacity: " << result.maxCapacity << "\n";
+    if (result.groupSize != -1)
+        std::cout << "Group size: " << result.groupSize << "\n";
+    if (result.minDuration != -1)
+        std::cout << "Minimum duration: " << result.minDuration << "\n";
 
     std::vector<std::list<int>> paths = result.paths;
 
-    for(unsigned i = 0; i < paths.size(); ++i) {
+    for (unsigned i = 0; i < paths.size(); ++i) {
         std::list<int> path = paths.at(i);
-        std::cout << "Path nr." << i + 1 << std::endl << std::endl;
-        for(unsigned j = 0; j < paths.at(i).size(); ++j) {
-            if(j < paths.at(i).size() - 1)
+
+        if (paths.size() > 1)
+            std::cout << "Path number " << i + 1 << std::endl;
+
+        for (unsigned j = 0; j < paths.at(i).size(); ++j) {
+            if (j < paths.at(i).size() - 1)
                 std::cout << path.front() << " > ";
             else
                 std::cout << path.front();
             path.pop_front();
-        } 
+        }
         std::cout << std::endl << std::endl;
     }
 
-    auto menu = optionsMenu<Menu>({
-        {"Continue", Menu::MAIN},
-    });
-    currentMenu = menu.value_or(currentMenu);
+    getStringInput("Press enter to continue ");
+    currentMenu = Menu::MAIN;
 }

@@ -4,13 +4,13 @@
 struct DatasetGenerationParams;
 class Dataset;
 
+#include <climits>
+#include <iostream>
+#include <list>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include <climits>
-#include <iostream>
-#include <list>
 
 #include "./graph.hpp"
 
@@ -39,29 +39,31 @@ class Dataset {
 
     /**
      * @brief This graph's residual graph in a matrix
-     * 
+     *
      */
     std::vector<std::vector<int>> residualGraph;
 
-    Dataset(const Graph& graph);
-    Dataset() {};
+    Dataset(const Graph &graph);
+    Dataset(){};
 
     /**
-    * @brief Applies breadth-first-search to the graph when running the EdmondsKarp algorithm
-    *
-    * @param s Starting node
-    * @param t Destination node
-    * @param parent Array to keep the path
-    * @param residualGraph The residual graph of a dataset
-    *
-    * @return The max flow that is available in the path from s to t
-    */
-    std::pair<int, std::list<int>> EK_bfs(int s, int t, std::vector<int>& parent, std::vector<std::vector<int>>& residualGraph);
+     * @brief Applies breadth-first-search to the graph when running the
+     *        Edmonds-Karp algorithm
+     *
+     * @param s Starting node
+     * @param t Destination node
+     * @param parent Array to keep the path
+     * @param residualGraph The residual graph of a dataset
+     *
+     * @return The max flow that is available in the path from s to t
+     */
+    std::pair<int, std::list<int>>
+    edmondsKarpBFS(int s, int t, std::vector<int> &parent,
+                   std::vector<std::vector<int>> &residualGraph);
 
 public:
-
-    Graph& getGraph() { return network; }
-    Graph& getPath() { return path; }
+    Graph &getGraph() { return network; }
+    Graph &getPath() { return path; }
 
     /**
      * @brief Loads a dataset from the given path.
@@ -94,22 +96,22 @@ public:
     static std::vector<std::string> getAvailableDatasets();
 
     /**
-    * @brief Implementation of the Edmonds-Karp algorithm
-    *
-    * @param s Starting node
-    * @param t Destination node
-    *
-    * @return The max flow from s to t
-    */
-    std::pair<int, std::vector<std::list<int>>> edmondsKarp(int s, int t,
-        EdmondsKarpUsage usage, int groupSize);
+     * @brief Implementation of the Edmonds-Karp algorithm
+     *
+     * @param s Starting node
+     * @param t Destination node
+     *
+     * @return The max flow from s to t
+     */
+    std::pair<int, std::vector<std::list<int>>>
+    edmondsKarp(int s, int t, EdmondsKarpUsage usage, int groupSize);
 
     /**
      * @brief Get the residual graph
-     * 
-     * @return std::vector<std::vector<int>> The matrix that represents the residual graph 
+     *
+     * @return The matrix that represents the residual graph
      */
-    std::vector<std::vector<int>> getCap() { return residualGraph; };
+    std::vector<std::vector<int>> getResidualGraph() { return residualGraph; };
 };
 
 #endif

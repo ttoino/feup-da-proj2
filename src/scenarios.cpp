@@ -1,19 +1,22 @@
 #include <algorithm>
-#include <functional>
 #include <fstream>
+#include <functional>
+#include <iostream>
 #include <limits>
 #include <list>
 #include <set>
 #include <sstream>
-#include <iostream>
 
 #include "../includes/constants.hpp"
 #include "../includes/scenarios.hpp"
 #include "../includes/subscenarios.hpp"
 
 ScenarioResult::ScenarioResult(int flow, int maxCapacity, int groupSize,
-    std::vector<std::list<int>> paths, const std::chrono::microseconds &runtime, int minDuration)
-    : flow(flow), maxCapacity(maxCapacity), groupSize(groupSize), paths(paths), runtime(runtime), minDuration(minDuration)  {}
+                               std::vector<std::list<int>> paths,
+                               const std::chrono::microseconds &runtime,
+                               int minDuration)
+    : flow(flow), maxCapacity(maxCapacity), groupSize(groupSize), paths(paths),
+      runtime(runtime), minDuration(minDuration) {}
 
 std::string ScenarioResult::toCSV() const {
     std::stringstream out{};
@@ -29,67 +32,60 @@ std::string ScenarioResult::toCSV() const {
             std::advance(front, i);
             path_ss << *front << " -> ";
         }
-            
 
         path_ss << path.back() << "]";
 
         out << ',' << path_ss.str();
-    } else out << ",[]";
+    } else
+        out << ",[]";
 
     out << ',' << minDuration;
 
     return out.str();
 }
 
-const ScenarioResult scenario1(Dataset &dataset,
-                               Scenario1Strategy strat) {
+const ScenarioResult scenario1(Dataset &dataset, Scenario1Strategy strat) {
+    ScenarioResult result;
 
+    switch (strat) {
+    case Scenario1Strategy::FIRST:
+        result = scenario1_1(dataset);
+        break;
 
-    ScenarioResult result = {-1, -1, -1, std::vector<std::list<int>>(), static_cast<std::chrono::microseconds>(0), -1};
+    case Scenario1Strategy::SECOND:
+        result = scenario1_2(dataset);
+        break;
 
-    switch(strat) {
-        case Scenario1Strategy::FIRST:
-            result = scenario1_1(dataset); 
-            break;
-
-        case Scenario1Strategy::SECOND:
-            result = scenario1_2(dataset);
-            break;
-
-        default:
-            break;
+    default:
+        break;
     }
 
     return result;
-
 }
 
-const ScenarioResult scenario2(Dataset &dataset,
-                               Scenario2Strategy strat) {
-    
+const ScenarioResult scenario2(Dataset &dataset, Scenario2Strategy strat) {
+    ScenarioResult result;
 
-    ScenarioResult result = {-1, -1, -1, std::vector<std::list<int>>(), static_cast<std::chrono::microseconds>(0), -1};
-    
-    switch(strat) {
-        case Scenario2Strategy::FIRST:
-            result = scenario2_1(dataset);
-            break;
-        case Scenario2Strategy::SECOND:
-            //TODO
-            break;
-        case Scenario2Strategy::THIRD:
-            result = scenario2_3(dataset);
-            break;
-        case Scenario2Strategy::FOURTH:
-            //TODO
-            result = scenario2_4(dataset);
-            break;
-        case Scenario2Strategy::FIFTH:
-            //TODO
-            break;
+    switch (strat) {
+    case Scenario2Strategy::FIRST:
+        result = scenario2_1(dataset);
+        break;
+    case Scenario2Strategy::SECOND:
+        // TODO
+        break;
+    case Scenario2Strategy::THIRD:
+        result = scenario2_3(dataset);
+        break;
+    case Scenario2Strategy::FOURTH:
+        // TODO
+        result = scenario2_4(dataset);
+        break;
+    case Scenario2Strategy::FIFTH:
+        // TODO
+        break;
 
-        default:
-            break;
+    default:
+        break;
     }
 
     return result;

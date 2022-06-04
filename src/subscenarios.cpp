@@ -4,16 +4,17 @@
 #include "../includes/subscenarios.hpp"
 
 ScenarioResult scenario1_1(Dataset &dataset) {
-
     auto tstart = std::chrono::high_resolution_clock::now();
 
-    auto& nodes = dataset.getGraph().getNodes();
+    auto &nodes = dataset.getGraph().getNodes();
 
     std::vector<int> capacities(static_cast<int>(nodes.size()) + 1, 0);
-    std::set<std::pair<int /* capacity */, int /* node */>, std::greater<std::pair<int, int>>> capacitiesHeap;
+    std::set<std::pair<int /* capacity */, int /* node */>,
+             std::greater<std::pair<int, int>>>
+        capacitiesHeap;
     std::vector<std::list<int>> paths;
 
-    for (auto& [index, node] : nodes) {
+    for (auto &[index, node] : nodes) {
         capacitiesHeap.insert({0, index});
         capacities.at(index) = 0;
         node.parent = -1;
@@ -25,13 +26,12 @@ ScenarioResult scenario1_1(Dataset &dataset) {
     nodes[1].parent = 1;
 
     while (!capacitiesHeap.empty()) {
-
         int v = capacitiesHeap.extract(capacitiesHeap.begin()).value().second;
 
-        auto& orig = nodes.at(v);
+        auto &orig = nodes.at(v);
 
-        for (auto& edge : orig.adj) {
-            auto& w = edge.dest;
+        for (auto &edge : orig.adj) {
+            auto &w = edge.dest;
 
             if (std::min(capacities[v], edge.capacity) > capacities[w]) {
 
@@ -46,7 +46,7 @@ ScenarioResult scenario1_1(Dataset &dataset) {
     int node = nodes.at(nodes.size()).label;
     std::list<int> path;
 
-    while(node != nodes.at(1).label) {
+    while (node != nodes.at(1).label) {
         path.insert(path.begin(), node);
         node = nodes.at(node).parent;
     }
@@ -55,33 +55,47 @@ ScenarioResult scenario1_1(Dataset &dataset) {
 
     auto tend = std::chrono::high_resolution_clock::now();
 
-    return {-1, capacities[nodes.size()], -1, paths, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart), -1};
+    return {
+        -1,
+        capacities[nodes.size()],
+        -1,
+        paths,
+        std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart),
+        -1,
+    };
 }
 
 ScenarioResult scenario1_2(Dataset &dataset) {
-
     auto tstart = std::chrono::high_resolution_clock::now();
 
     std::vector<std::list<int>> paths;
-    
-    auto results = dataset.getGraph().BFS(1, dataset.getGraph().getNodes().size());
+
+    auto results =
+        dataset.getGraph().BFS(1, dataset.getGraph().getNodes().size());
     paths.push_back(results.second);
 
     auto tend = std::chrono::high_resolution_clock::now();
 
-    return {-1, results.first, -1, paths, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart), -1};
+    return {
+        -1,
+        results.first,
+        -1,
+        paths,
+        std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart),
+        -1,
+    };
 }
 
 ScenarioResult scenario2_1(Dataset &dataset) {
     auto tstart = std::chrono::high_resolution_clock::now();
 
     int groupSize = 0;
-    
+
     std::vector<std::list<int>> paths;
 
-    auto& nodes = dataset.getGraph().getNodes();
+    auto &nodes = dataset.getGraph().getNodes();
     EdmondsKarpUsage usage = EdmondsKarpUsage::CUSTOM;
-    
+
     Node startingNode = nodes.at(1);
     Node destinationNode = nodes.at(nodes.size());
 
@@ -92,17 +106,24 @@ ScenarioResult scenario2_1(Dataset &dataset) {
 
     std::pair<int, std::vector<std::list<int>>> res = dataset.edmondsKarp(
         startingNode.label, destinationNode.label, usage, groupSize);
-    
+
     int maxFlow = res.first;
     paths = res.second;
-    
+
     auto tend = std::chrono::high_resolution_clock::now();
 
-    return {maxFlow, -1, groupSize, paths, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart), -1};
+    return {
+        maxFlow,
+        -1,
+        groupSize,
+        paths,
+        std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart),
+        -1,
+    };
 }
 
 ScenarioResult scenario2_2(Dataset &dataset) {
-    //TODO
+    // TODO
 }
 
 ScenarioResult scenario2_3(Dataset &dataset) {
@@ -111,26 +132,35 @@ ScenarioResult scenario2_3(Dataset &dataset) {
 
     std::vector<std::list<int>> paths;
 
-    auto& nodes = dataset.getGraph().getNodes();
-    
+    auto &nodes = dataset.getGraph().getNodes();
+
     Node startingNode = nodes.at(1);
     Node destinationNode = nodes.at(nodes.size());
 
-    std::pair<int, std::vector<std::list<int>>> res = dataset.edmondsKarp(
-        startingNode.label, destinationNode.label, EdmondsKarpUsage::DEFAULT, 0);
-    
+    std::pair<int, std::vector<std::list<int>>> res =
+        dataset.edmondsKarp(startingNode.label, destinationNode.label,
+                            EdmondsKarpUsage::DEFAULT, 0);
+
     int maxFlow = res.first;
     paths = res.second;
 
     auto tend = std::chrono::high_resolution_clock::now();
 
-    return {maxFlow, -1, -1, paths, std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart), -1};
+    return {
+        maxFlow,
+        -1,
+        -1,
+        paths,
+        std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart),
+        -1,
+    };
 }
 
 ScenarioResult scenario2_4(Dataset &dataset) {
-    
-    /* TODO: have a path-finding algorithm find a suitable path for a given group size 
-     and make it so this algorithm only takes into account those nodes that constitute said path */
+
+    /* TODO: have a path-finding algorithm find a suitable path for a given
+     group size and make it so this algorithm only takes into account those
+     nodes that constitute said path */
 
     scenario2_1(dataset);
 
@@ -140,10 +170,11 @@ ScenarioResult scenario2_4(Dataset &dataset) {
     std::unordered_map<int, int> entryDegree;
     int minDuration = -1;
 
-    for (const auto& [index, node] : nodes) {
-        entryDegree[index] += 0; // just to guarantee that nodes with degree 0 are added too
+    for (const auto &[index, node] : nodes) {
+        // just to guarantee that nodes with degree 0 are added too
+        entryDegree[index] += 0;
         earliestStart[index] = 0;
-        for (const auto& edge : node.adj) {
+        for (const auto &edge : node.adj) {
 
             int dest = edge.dest;
 
@@ -159,30 +190,38 @@ ScenarioResult scenario2_4(Dataset &dataset) {
     }
 
     while (!s.empty()) {
+        int v = s.front();
+        s.pop();
 
-        int v = s.front(); s.pop();
-
-        if (minDuration < earliestStart[v]) 
+        if (minDuration < earliestStart[v])
             minDuration = earliestStart[v];
 
         auto node = nodes.find(v);
 
-        for (const auto& edge : node->second.adj) {
-
+        for (const auto &edge : node->second.adj) {
             int w = edge.dest;
 
             if (earliestStart[w] < earliestStart[v] + edge.duration)
                 earliestStart[w] = earliestStart[v] + edge.duration;
 
-            if (--entryDegree[w] == 0) s.push(w);
+            if (--entryDegree[w] == 0)
+                s.push(w);
         }
     }
 
-    return {-1, -1, -1, std::vector<std::list<int>>(), static_cast<std::chrono::microseconds>(0), minDuration};
+    return {
+        -1,
+        -1,
+        -1,
+        std::vector<std::list<int>>(),
+        static_cast<std::chrono::microseconds>(0),
+        minDuration,
+    };
 }
 
 ScenarioResult scenario2_5(Dataset &dataset) {
-    //TODO
+    // TODO
 
-    // one can adapt 2.4 to calculate the difference in the middle of the algorithm
+    // one can adapt 2.4 to calculate the difference in the middle of the
+    // algorithm
 }

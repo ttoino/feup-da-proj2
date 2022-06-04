@@ -60,10 +60,9 @@ class UserInterface {
     std::string errorMessage{};
 
     /**
-     * @brief The result that is shown in resultsMenu() and resultsVansMenu().
+     * @brief The result that is shown in resultsMenu().
      */
-    ScenarioResult result = {-1, -1, -1,
-        std::vector<std::list<int>>(), static_cast<std::chrono::microseconds>(0), -1};
+    ScenarioResult result;
 
     /**
      * @brief Helper method to show a menu with options.

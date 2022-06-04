@@ -19,7 +19,7 @@ void Graph::addEdge(int src, int dest, int capacity, int duration) {
 
 std::pair<int, std::list<int>> Graph::BFS(int s, int t) {
 
-    this->visitedFalse();
+    this->resetVisits();
 
     std::list<int> path_list;
     std::queue<std::pair<int ,int>> q; // queue of unvisited nodes with distance to s
@@ -76,7 +76,7 @@ std::pair<int, std::list<int>> Graph::BFS(int s, int t) {
     return {minCap, path_list};
 }
 
-void Graph::visitedFalse() {
+void Graph::resetVisits() {
     for (auto& [index, node] : nodes) {
         node.visited = false;
         node.parent = -1;

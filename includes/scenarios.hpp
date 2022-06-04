@@ -27,8 +27,11 @@ struct ScenarioResult {
      * @param vans The vans that were used.
      * @param runtime How much time the algorithm took to run.
      */
-    ScenarioResult(int flow, int maxCapacity, 
-        int groupSize, std::vector<std::list<int>> paths, const std::chrono::microseconds &runtime, int minDuration);
+    ScenarioResult(int flow, int maxCapacity, int groupSize,
+                   std::vector<std::list<int>> paths,
+                   const std::chrono::microseconds &runtime, int minDuration);
+
+    ScenarioResult(){};
 
     /**
      * @brief Converts this object to a csv representation.

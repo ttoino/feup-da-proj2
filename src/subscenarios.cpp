@@ -124,6 +124,7 @@ ScenarioResult scenario2_1(Dataset &dataset) {
 
 ScenarioResult scenario2_2(Dataset &dataset) {
     // TODO
+    return {};
 }
 
 ScenarioResult scenario2_3(Dataset &dataset) {
@@ -224,4 +225,5 @@ ScenarioResult scenario2_5(Dataset &dataset) {
 
     // one can adapt 2.4 to calculate the difference in the middle of the
     // algorithm
+    return {};
 }

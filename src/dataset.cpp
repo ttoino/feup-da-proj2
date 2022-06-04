@@ -29,8 +29,8 @@ Dataset Dataset::load(const std::string &path) {
 
     tokens = split(line, ' ');
 
-    unsigned int n = stoul(tokens[0]);
-    unsigned int t = stoul(tokens[1]);
+    int n = stoul(tokens[0]);
+    int t = stoul(tokens[1]);
 
     Graph result{n};
 
@@ -146,11 +146,11 @@ Dataset::edmondsKarp(int s, int t, EdmondsKarpUsage usage, int groupSize) {
 
             auto startNodeEdges = startNode.adj;
 
-            auto edge = std::find_if(
-                startNodeEdges.begin(), startNodeEdges.end(),
-                [&destNode](const Edge &edge) -> bool {
-                    return edge.dest == destNode.label;
-                });
+            auto edge =
+                std::find_if(startNodeEdges.begin(), startNodeEdges.end(),
+                             [&destNode](const Edge &edge) -> bool {
+                                 return edge.dest == destNode.label;
+                             });
 
             if (edge == startNodeEdges.end())
                 continue;

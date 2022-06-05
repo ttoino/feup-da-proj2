@@ -258,14 +258,22 @@ void UserInterface::scenarioOneMenu(Dataset &dataset) {
 }
 
 void UserInterface::scenarioTwoMenu(Dataset &dataset) {
-    auto selection = optionsMenu<std::optional<Scenario2Strategy>>({
-        {"Go back", {}},
-        {"Find path from group size", Scenario2Strategy::FIRST},
-        {"Increase group size", Scenario2Strategy::SECOND},
-        {"Find maximum group size and its path", Scenario2Strategy::THIRD},
-        {"Find earliest end time", Scenario2Strategy::FOURTH},
-        {"Find maximum wait time", Scenario2Strategy::FIFTH},
-    });
+    Options<std::optional<Scenario2Strategy>> options = 
+        dataset.getPath().getNodes().empty() ? 
+        Options<std::optional<Scenario2Strategy>>{
+            {"Go back", {}},
+            {"Find path from group size", Scenario2Strategy::FIRST},
+            {"Find maximum group size and its path", Scenario2Strategy::THIRD},
+        } : Options<std::optional<Scenario2Strategy>>{
+            {"Go back", {}},
+            {"Find path from group size", Scenario2Strategy::FIRST},
+            {"Increase group size", Scenario2Strategy::SECOND},
+            {"Find maximum group size and its path", Scenario2Strategy::THIRD},
+            {"Find earliest end time", Scenario2Strategy::FOURTH},
+            {"Find maximum wait time", Scenario2Strategy::FIFTH},
+        };
+
+    auto selection = optionsMenu(options);
 
     if (!selection.has_value()) // Error while getting option
         return;
@@ -298,8 +306,9 @@ void UserInterface::resultsMenu() {
 
     std::vector<std::list<int>> paths = result.paths;
 
-    if(paths.size() == 0) {
-        std::cout << "There isn't an available path for a group of size " << result.groupSize << std::endl;
+    if (paths.size() == 0) {
+        std::cout << "There isn't an available path for a group of size "
+                  << result.groupSize << std::endl;
     }
 
     for (unsigned i = 0; i < paths.size(); ++i) {

@@ -51,8 +51,8 @@ struct Node {
 
     bool visited = false, printed = false;
 
-    int waitTime =
-        -1; // max(incoming-ES) - min(incoming-ES) [scenarios 2.4 and 2.5]
+    // max(incoming-ES) - min(incoming-ES) [scenarios 2.4 and 2.5]
+    int waitTime = -1;
 
     Node(const int label) : label(label){};
     Node(){};

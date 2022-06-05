@@ -238,6 +238,19 @@ void UserInterface::generateDatasetMenu(Dataset &dataset) {
             break;
     }
 
+    params.numberOfNodes = getUnsignedInput("Number of nodes to generate: ", 1);
+    params.numberOfEdges =
+        getUnsignedInput("Number of edges to generate: ", 1,
+                         params.numberOfNodes * (params.numberOfNodes - 1) / 2);
+
+    params.minEdgeCapacity = getUnsignedInput("Minimum edge capacity: ", 1);
+    params.maxEdgeCapacity =
+        getUnsignedInput("Maximum edge capacity: ", params.minEdgeCapacity);
+
+    params.minEdgeDuration = getUnsignedInput("Minimum edge duration: ", 1);
+    params.maxEdgeDuration =
+        getUnsignedInput("Maximum edge duration: ", params.minEdgeDuration);
+
     currentMenu = Menu::MAIN;
     dataset = Dataset::generate(name, params);
 }

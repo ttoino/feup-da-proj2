@@ -3,6 +3,7 @@
 #include <fstream>
 #include <list>
 #include <queue>
+#include <random>
 
 #include "../includes/constants.hpp"
 #include "../includes/dataset.hpp"
@@ -55,10 +56,42 @@ Dataset Dataset::load(const std::string &path) {
 
 Dataset Dataset::generate(const std::string &name,
                           const DatasetGenerationParams &params) {
-    // TODO
-    std::filesystem::create_directory({DATASETS_PATH + name});
+    std::ofstream out{DATASETS_PATH + name + ".txt"};
 
-    return {};
+    out << params.numberOfNodes << ' ' << params.numberOfEdges << '\n';
+
+    Graph graph{params.numberOfNodes};
+    auto &nodesMap = graph.getNodes();
+
+    std::vector<std::pair<int, int>>edges{};
+
+    for (int i = 1; i < params.numberOfNodes; ++i)
+        for (int j = i + 1; j <= params.numberOfNodes; ++j)
+            edges.push_back({i, j});
+
+    // Setup random generators
+    std::random_device rd{};
+    std::mt19937 gen{rd()};
+
+    std::uniform_int_distribution
+        edgeCapacityDist{params.minEdgeCapacity, params.maxEdgeCapacity},
+        edgeDurationDist{params.minEdgeDuration, params.maxEdgeDuration};
+
+    std::shuffle(edges.begin(), edges.end(), gen);
+
+    for (int i = 0; i < params.numberOfEdges && i < edges.size(); i++) {
+        auto e = edges.at(i);
+        Node& n = nodesMap.at(e.first);
+        
+        int capacity = edgeCapacityDist(gen);
+        int duration = edgeDurationDist(gen);
+
+        n.adj.insert({e.second, capacity, duration});
+
+        out << e.first << ' ' << e.second << ' ' << capacity << ' ' << duration << '\n';
+    }
+
+    return {graph};
 }
 
 std::vector<std::string> Dataset::getAvailableDatasets() {
@@ -76,7 +109,8 @@ std::vector<std::string> Dataset::getAvailableDatasets() {
 
 std::pair<int, std::list<int>>
 Dataset::edmondsKarpBFS(int s, int t, std::vector<int> &parent,
-                        std::vector<std::vector<int>> &residualGraph, bool isWholeGraph) {
+                        std::vector<std::vector<int>> &residualGraph,
+                        bool isWholeGraph) {
     std::list<int> path;
 
     auto &nodes = this->network.getNodes();
@@ -113,12 +147,14 @@ Dataset::edmondsKarpBFS(int s, int t, std::vector<int> &parent,
 }
 
 std::pair<int, std::vector<std::list<int>>>
-Dataset::edmondsKarp(int s, int t, EdmondsKarpUsage usage, int groupSize, bool isWholeGraph) {
+Dataset::edmondsKarp(int s, int t, EdmondsKarpUsage usage, int groupSize,
+                     bool isWholeGraph) {
     // ensure old paths don't mess-up this instance of calculations
-    if(isWholeGraph)
+    if (isWholeGraph)
         this->path.clear();
 
-    auto &nodes = isWholeGraph ? this->network.getNodes() : this->path.getNodes();
+    auto &nodes =
+        isWholeGraph ? this->network.getNodes() : this->path.getNodes();
 
     int flow = 0, new_flow = 0;
     std::vector<int> parent(this->network.getNodes().size() + 1);

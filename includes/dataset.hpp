@@ -20,7 +20,14 @@ class Dataset;
  * @brief Parameters to customize how Dataset::generate() generates datasets.
  */
 struct DatasetGenerationParams {
-    // TODO
+    int numberOfNodes;
+    int numberOfEdges;
+
+    unsigned int minEdgeCapacity;
+    unsigned int maxEdgeCapacity;
+
+    unsigned int minEdgeDuration;
+    unsigned int maxEdgeDuration;
 };
 
 enum EdmondsKarpUsage {

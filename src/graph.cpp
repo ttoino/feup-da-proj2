@@ -95,7 +95,7 @@ void Graph::addNode(int i, const Node& node) {
 std::string Graph::toDotFile() {
     std::stringstream out{};
 
-    out << "digraph {\noverlap=scale\n";
+    out << "digraph {\noverlap=scale\nsplines=true\nnode [shape=circle]\n";
 
     for (auto p : nodes)
         for (auto e : p.second.adj)

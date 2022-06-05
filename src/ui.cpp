@@ -298,6 +298,10 @@ void UserInterface::resultsMenu() {
 
     std::vector<std::list<int>> paths = result.paths;
 
+    if(paths.size() == 0) {
+        std::cout << "There isn't an available path for a group of size " << result.groupSize << std::endl;
+    }
+
     for (unsigned i = 0; i < paths.size(); ++i) {
         std::list<int> path = paths.at(i);
 

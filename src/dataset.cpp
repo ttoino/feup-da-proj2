@@ -76,12 +76,12 @@ std::vector<std::string> Dataset::getAvailableDatasets() {
 
 std::pair<int, std::list<int>>
 Dataset::edmondsKarpBFS(int s, int t, std::vector<int> &parent,
-                        std::vector<std::vector<int>> &residualGraph) {
+                        std::vector<std::vector<int>> &residualGraph, bool isWholeGraph) {
     std::list<int> path;
 
     auto &nodes = this->network.getNodes();
 
-    for (unsigned i = 1; i <= nodes.size(); i++)
+    for (unsigned i = 1; i <= this->network.getNodes().size(); i++)
         parent.at(i) = -1;
 
     parent.at(s) = s;
@@ -113,14 +113,15 @@ Dataset::edmondsKarpBFS(int s, int t, std::vector<int> &parent,
 }
 
 std::pair<int, std::vector<std::list<int>>>
-Dataset::edmondsKarp(int s, int t, EdmondsKarpUsage usage, int groupSize) {
+Dataset::edmondsKarp(int s, int t, EdmondsKarpUsage usage, int groupSize, bool isWholeGraph) {
     // ensure old paths don't mess-up this instance of calculations
-    this->path.clear();
+    if(isWholeGraph)
+        this->path.clear();
 
-    auto &nodes = this->network.getNodes();
+    auto &nodes = isWholeGraph ? this->network.getNodes() : this->path.getNodes();
 
     int flow = 0, new_flow = 0;
-    std::vector<int> parent(nodes.size() + 1);
+    std::vector<int> parent(this->network.getNodes().size() + 1);
     std::list<int> bfs_path;
     std::vector<std::list<int>> paths;
     std::pair<int, std::list<int>> bfsResult;
@@ -128,7 +129,7 @@ Dataset::edmondsKarp(int s, int t, EdmondsKarpUsage usage, int groupSize) {
 
     while (usage == EdmondsKarpUsage::DEFAULT ||
            (usage == EdmondsKarpUsage::CUSTOM && flow < groupSize)) {
-        bfsResult = edmondsKarpBFS(s, t, parent, residualGraph);
+        bfsResult = edmondsKarpBFS(s, t, parent, residualGraph, isWholeGraph);
         new_flow = bfsResult.first;
         bfs_path = bfsResult.second;
 
@@ -137,7 +138,7 @@ Dataset::edmondsKarp(int s, int t, EdmondsKarpUsage usage, int groupSize) {
 
         // we found a new valid augment path, update path graph
 
-        int currentNode = nodes.size();
+        int currentNode = this->network.getNodes().size();
         do {
             int parentNode = parent.at(currentNode);
 

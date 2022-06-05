@@ -59,7 +59,7 @@ class Dataset {
      */
     std::pair<int, std::list<int>>
     edmondsKarpBFS(int s, int t, std::vector<int> &parent,
-                   std::vector<std::vector<int>> &residualGraph);
+                   std::vector<std::vector<int>> &residualGraph, bool isWholeGragh);
 
 public:
     Graph &getGraph() { return network; }
@@ -104,7 +104,7 @@ public:
      * @return The max flow from s to t
      */
     std::pair<int, std::vector<std::list<int>>>
-    edmondsKarp(int s, int t, EdmondsKarpUsage usage, int groupSize);
+    edmondsKarp(int s, int t, EdmondsKarpUsage usage, int groupSize, bool isWholeGragh);
 
     /**
      * @brief Get the residual graph

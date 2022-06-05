@@ -71,13 +71,12 @@ const ScenarioResult scenario2(Dataset &dataset, Scenario2Strategy strat) {
         result = scenario2_1(dataset);
         break;
     case Scenario2Strategy::SECOND:
-        // TODO
+        result = scenario2_2(dataset);
         break;
     case Scenario2Strategy::THIRD:
         result = scenario2_3(dataset);
         break;
     case Scenario2Strategy::FOURTH:
-        // TODO
         result = scenario2_4(dataset);
         break;
     case Scenario2Strategy::FIFTH:

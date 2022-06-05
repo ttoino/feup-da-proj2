@@ -105,10 +105,11 @@ ScenarioResult scenario2_1(Dataset &dataset) {
     std::cin.clear();
 
     std::pair<int, std::vector<std::list<int>>> res = dataset.edmondsKarp(
-        startingNode.label, destinationNode.label, usage, groupSize);
+        startingNode.label, destinationNode.label, usage, groupSize, true);
 
     int maxFlow = res.first;
-    paths = res.second;
+
+    paths = (maxFlow < groupSize) ? paths : res.second;
 
     auto tend = std::chrono::high_resolution_clock::now();
 
@@ -123,8 +124,49 @@ ScenarioResult scenario2_1(Dataset &dataset) {
 }
 
 ScenarioResult scenario2_2(Dataset &dataset) {
-    // TODO
-    return {};
+    auto tstart = std::chrono::high_resolution_clock::now();
+    
+    int groupSizeIncrement = 0;
+    int initialGroupSize = scenario2_1(dataset).groupSize;
+
+    std::vector<std::list<int>> paths;
+
+    auto &nodes = dataset.getPath().getNodes();
+    EdmondsKarpUsage usage = EdmondsKarpUsage::CUSTOM;
+
+    Node startingNode = nodes.at(1);
+    Node destinationNode = nodes.at(dataset.getGraph().getNodes().size());
+
+    std::cout << "Group size increment: ";
+    std::cin >> groupSizeIncrement;
+    std::cin.ignore(1000, '\n');
+    std::cin.clear();
+
+    int newGroupSize = initialGroupSize + groupSizeIncrement;
+
+    std::pair<int, std::vector<std::list<int>>> res = dataset.edmondsKarp(
+        startingNode.label, destinationNode.label, usage, newGroupSize, false);
+    
+    if(res.first < newGroupSize) {
+        std::cout << "The group can't travel through the current path\n";
+        std::pair<int, std::vector<std::list<int>>> res = dataset.edmondsKarp(
+            startingNode.label, destinationNode.label, usage, newGroupSize, true);
+    }
+
+    int maxFlow = res.first;
+    
+    paths = (maxFlow < newGroupSize) ? paths : res.second;
+
+    auto tend = std::chrono::high_resolution_clock::now();
+
+    return {
+        maxFlow,
+        -1,
+        newGroupSize,
+        paths,
+        std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart),
+        -1
+    };
 }
 
 ScenarioResult scenario2_3(Dataset &dataset) {
@@ -140,7 +182,7 @@ ScenarioResult scenario2_3(Dataset &dataset) {
 
     std::pair<int, std::vector<std::list<int>>> res =
         dataset.edmondsKarp(startingNode.label, destinationNode.label,
-                            EdmondsKarpUsage::DEFAULT, 0);
+                            EdmondsKarpUsage::DEFAULT, 0, true);
 
     int maxFlow = res.first;
     paths = res.second;

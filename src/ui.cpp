@@ -321,6 +321,18 @@ void UserInterface::resultsMenu() {
         std::cout << "Group size: " << result.groupSize << "\n";
     if (result.minDuration != -1)
         std::cout << "Minimum duration: " << result.minDuration << "\n";
+    if (result.maxWaitTime != -1)
+        std::cout << "Maximum wait time: " << result.maxWaitTime << "\n";
+    if (!result.maxWaitNodes.empty()) {
+        std::cout << "\tat nodes "; 
+        
+        for (auto it = result.maxWaitNodes.begin(); it != result.maxWaitNodes.end() - 2; ++it)
+            std::cout << *it << ", ";
+
+        std::cout << *(result.maxWaitNodes.end() - 2) << " and " << *(result.maxWaitNodes.end() - 1);
+        std::cout << "\n";
+    }
+
 
     std::vector<std::list<int>> paths = result.paths;
 

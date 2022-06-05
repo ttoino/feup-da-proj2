@@ -1,5 +1,6 @@
 #include <queue>
 #include <unordered_map>
+#include <map>
 
 #include "../includes/subscenarios.hpp"
 
@@ -62,6 +63,8 @@ ScenarioResult scenario1_1(Dataset &dataset) {
         paths,
         std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart),
         -1,
+        -1,
+        {}
     };
 }
 
@@ -83,6 +86,8 @@ ScenarioResult scenario1_2(Dataset &dataset) {
         paths,
         std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart),
         -1,
+        -1,
+        {}
     };
 }
 
@@ -120,6 +125,8 @@ ScenarioResult scenario2_1(Dataset &dataset) {
         paths,
         std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart),
         -1,
+        -1,
+        {}
     };
 }
 
@@ -165,7 +172,9 @@ ScenarioResult scenario2_2(Dataset &dataset) {
         newGroupSize,
         paths,
         std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart),
-        -1
+        -1,
+        -1,
+        {}
     };
 }
 
@@ -196,18 +205,16 @@ ScenarioResult scenario2_3(Dataset &dataset) {
         paths,
         std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart),
         -1,
+        -1,
+        {}
     };
 }
 
 ScenarioResult scenario2_4(Dataset &dataset) {
 
-    /* TODO: have a path-finding algorithm find a suitable path for a given
-     group size and make it so this algorithm only takes into account those
-     nodes that constitute said path */
-
     scenario2_1(dataset);
 
-    auto nodes = dataset.getPath().getNodes();
+    auto& nodes = dataset.getPath().getNodes();
 
     std::unordered_map<int, int> earliestStart;
     std::unordered_map<int, int> entryDegree;
@@ -247,6 +254,10 @@ ScenarioResult scenario2_4(Dataset &dataset) {
             if (earliestStart[w] < earliestStart[v] + edge.duration)
                 earliestStart[w] = earliestStart[v] + edge.duration;
 
+            auto& destNode = nodes[w];
+            destNode.maxTime = std::max(destNode.maxTime, earliestStart[w]);
+            destNode.minTime = std::min(destNode.minTime, earliestStart[w]);
+
             if (--entryDegree[w] == 0)
                 s.push(w);
         }
@@ -259,13 +270,37 @@ ScenarioResult scenario2_4(Dataset &dataset) {
         std::vector<std::list<int>>(),
         static_cast<std::chrono::microseconds>(0),
         minDuration,
+        -1,
+        {}
     };
 }
 
 ScenarioResult scenario2_5(Dataset &dataset) {
-    // TODO
 
-    // one can adapt 2.4 to calculate the difference in the middle of the
-    // algorithm
-    return {};
+    scenario2_4(dataset);
+
+    std::multimap<int, int> waitTimes; // ordering is useful to retrieve the maxWaitTime
+
+    auto& nodes = dataset.getPath().getNodes();
+
+    for (const auto& [index, node] : nodes)
+        waitTimes.insert({node.maxTime - node.minTime, index});
+
+    auto maxWaitTime = waitTimes.rbegin()->first;
+
+    std::vector<int> maxWaitNodes;
+    auto maxWaitTimeRange = waitTimes.equal_range(maxWaitTime);
+    for (auto it = maxWaitTimeRange.first; it != maxWaitTimeRange.second; ++it)
+        maxWaitNodes.push_back(it->second);
+
+    return {
+        -1,
+        -1,
+        -1,
+        std::vector<std::list<int>>(),
+        static_cast<std::chrono::microseconds>(0),
+        -1,
+        maxWaitTime,
+        maxWaitNodes
+    };
 }

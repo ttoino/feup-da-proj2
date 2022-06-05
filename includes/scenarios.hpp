@@ -18,7 +18,8 @@ struct ScenarioResult {
     /** @brief How much time the algorithm took to run. */
     std::chrono::microseconds runtime{0};
     std::vector<std::list<int>> paths = {};
-    int flow = -1, maxCapacity = -1, groupSize = -1, minDuration = -1;
+    int flow = -1, maxCapacity = -1, groupSize = -1, minDuration = -1, maxWaitTime = -1;
+    std::vector<int> maxWaitNodes = {};
 
     /**
      * @brief Creates a scenario result from the given params.
@@ -28,8 +29,9 @@ struct ScenarioResult {
      * @param runtime How much time the algorithm took to run.
      */
     ScenarioResult(int flow, int maxCapacity, int groupSize,
-                   std::vector<std::list<int>> paths,
-                   const std::chrono::microseconds &runtime, int minDuration);
+                   const std::vector<std::list<int>>& paths,
+                   const std::chrono::microseconds &runtime, int minDuration, int maxWaitTime,
+                   const std::vector<int>& maxWaitNodes);
 
     ScenarioResult(){};
 

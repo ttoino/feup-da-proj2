@@ -51,6 +51,8 @@ struct Node {
 
     bool visited = false, printed = false;
 
+    int minTime = INT_MAX, maxTime = INT_MIN;
+
     // max(incoming-ES) - min(incoming-ES) [scenarios 2.4 and 2.5]
     int waitTime = -1;
 

@@ -12,11 +12,11 @@
 #include "../includes/subscenarios.hpp"
 
 ScenarioResult::ScenarioResult(int flow, int maxCapacity, int groupSize,
-                               std::vector<std::list<int>> paths,
+                               const std::vector<std::list<int>>& paths,
                                const std::chrono::microseconds &runtime,
-                               int minDuration)
+                               int minDuration, int maxWaitTime, const std::vector<int>& maxWaitNodes)
     : flow(flow), maxCapacity(maxCapacity), groupSize(groupSize), paths(paths),
-      runtime(runtime), minDuration(minDuration) {}
+      runtime(runtime), minDuration(minDuration), maxWaitTime(maxWaitTime), maxWaitNodes(maxWaitNodes) {}
 
 std::string ScenarioResult::toCSV() const {
     std::stringstream out{};
@@ -80,7 +80,7 @@ const ScenarioResult scenario2(Dataset &dataset, Scenario2Strategy strat) {
         result = scenario2_4(dataset);
         break;
     case Scenario2Strategy::FIFTH:
-        // TODO
+        result = scenario2_5(dataset);
         break;
 
     default:

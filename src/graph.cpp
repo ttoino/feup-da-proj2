@@ -1,6 +1,7 @@
 #include <queue>
 #include <list>
 #include <algorithm>
+#include <sstream>
 
 #include "../includes/constants.hpp"
 #include "../includes/graph.hpp"
@@ -91,3 +92,16 @@ void Graph::addNode(int i, const Node& node) {
     this->nodes.insert({i, node});
 }
 
+std::string Graph::toDotFile() {
+    std::stringstream out{};
+
+    out << "digraph {\noverlap=scale\n";
+
+    for (auto p : nodes)
+        for (auto e : p.second.adj)
+            out << p.first << " -> " << e.dest << '\n';
+
+    out << "}\n";
+
+    return out.str();
+}

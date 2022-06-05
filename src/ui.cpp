@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 
 #include "../includes/constants.hpp"
 #include "../includes/dataset.hpp"
@@ -121,6 +122,9 @@ void UserInterface::show(Dataset &dataset) {
     case Menu::GENERATE_DATASET:
         generateDatasetMenu(dataset);
         break;
+    case Menu::VISUALIZE_DATASET:
+        visualizeDatasetMenu(dataset);
+        break;
 
     case Menu::SCENARIO_ONE:
         scenarioOneMenu(dataset);
@@ -154,6 +158,7 @@ void UserInterface::mainMenu() {
         {"Choose dataset", Menu::CHOOSE_DATASET},
         {"Choose scenario", Menu::CHOOSE_SCENARIO},
         {"Generate dataset", Menu::GENERATE_DATASET},
+        {"Visualize dataset (requires graphviz)", Menu::VISUALIZE_DATASET},
     });
     currentMenu = menu.value_or(currentMenu);
 }
@@ -328,5 +333,23 @@ void UserInterface::resultsMenu() {
     }
 
     getStringInput("Press enter to continue ");
+    currentMenu = Menu::MAIN;
+}
+
+void UserInterface::visualizeDatasetMenu(Dataset &dataset) {
+    std::ofstream outfile{OUTPUT_PATH + "dataset.dot"};
+
+    outfile << dataset.getGraph().toDotFile();
+
+    outfile.close();
+
+    std::stringstream command{};
+
+    command << "sfdp -T svg " << OUTPUT_PATH << "dataset.dot > " << OUTPUT_PATH << "dataset.svg && xdg-open " << OUTPUT_PATH << "dataset.svg";
+
+    system(command.str().c_str());
+
+    getStringInput("Press enter to continue ");
+
     currentMenu = Menu::MAIN;
 }

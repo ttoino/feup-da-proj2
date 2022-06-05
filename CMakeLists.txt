@@ -31,6 +31,7 @@ include_directories(da_proj2_no_ansi includes/)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/datasets
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/outputs)
 
 # Doxygen Build
 find_package(Doxygen)

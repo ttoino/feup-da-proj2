@@ -24,6 +24,8 @@ enum class Menu {
     /** @brief Allows the user to generate a new dataset. */
     GENERATE_DATASET,
 
+    VISUALIZE_DATASET,
+
     /** @brief Runs scenario 1. */
     SCENARIO_ONE,
     /** @brief Runs scenario 2. */
@@ -213,6 +215,8 @@ class UserInterface {
      * @brief Shows the results of a scenario.
      */
     void resultsMenu();
+
+    void visualizeDatasetMenu(Dataset &dataset);
 
 public:
     /**

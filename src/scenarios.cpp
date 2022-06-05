@@ -91,7 +91,7 @@ const ScenarioResult scenario2(Dataset &dataset, Scenario2Strategy strat) {
 }
 
 void runAllScenarios() {
-    std::ofstream out{DATASETS_PATH + OUTPUT_FILE};
+    std::ofstream out{OUTPUT_PATH + OUTPUT_FILE};
     out << OUTPUT_HEADER;
 
     for (const auto &name : Dataset::getAvailableDatasets()) {

@@ -7,6 +7,8 @@
  * @brief Where the different datasets are stored.
  */
 const std::string DATASETS_PATH = "datasets/";
+
+const std::string OUTPUT_PATH = "outputs/";
 /**
  * @brief Where the scenario results will be stored in the datasets folder.
  */

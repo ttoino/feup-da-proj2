@@ -133,6 +133,8 @@ public:
      *
      */
     void clear() { nodes.clear(); };
+
+    std::string toDotFile();
 };
 
 #endif

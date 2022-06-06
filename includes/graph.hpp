@@ -44,7 +44,7 @@ struct Node {
     /**
      * @brief The outgoing edges connecting this node to others.
      */
-    std::unordered_set<Edge> adj{};
+    std::unordered_map<int, Edge> adj{};
 
     int label = -1;
     int parent = -1;

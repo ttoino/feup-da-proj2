@@ -77,12 +77,11 @@ Dataset Dataset::generate(const std::string &name,
 
     for (int i = 0; i < params.numberOfEdges && i < edges.size(); i++) {
         auto e = edges.at(i);
-        Node& n = nodesMap.at(e.first);
         
         int capacity = edgeCapacityDist(gen);
         int duration = edgeDurationDist(gen);
 
-        n.adj.insert({e.second, capacity, duration});
+        graph.addEdge(e.first, e.second, capacity, duration);
 
         out << e.first << ' ' << e.second << ' ' << capacity << ' ' << duration << '\n';
     }

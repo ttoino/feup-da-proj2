@@ -59,9 +59,7 @@ void scenario1_1(Dataset &dataset) {
 
         auto &orig = nodes.at(v);
 
-        for (auto &edge : orig.adj) {
-            auto &w = edge.dest;
-
+        for (auto &[w, edge] : orig.adj) {
             if (std::min(capacities[v], edge.capacity) > capacities[w]) {
                 capacitiesHeap.erase({capacities[w], w});
                 capacities[w] = std::min(capacities[v], edge.capacity);
@@ -105,9 +103,8 @@ void scenario1_2(Dataset &dataset) {
     result.capacity1_2 = INT_MAX;
 
     while (node != 1) {
-        auto edges = nodes.at(nodes.at(node).parent).adj;
-        auto edge = *std::find_if(edges.begin(), edges.end(),
-                                  [&](const Edge e) { return e.dest == node; });
+        auto parent = nodes.at(node).parent;
+        auto edge = nodes.at(parent).adj.at(node);
         if (edge.capacity < result.capacity1_2)
             result.capacity1_2 = edge.capacity;
 
@@ -194,9 +191,7 @@ void scenario2_4(Dataset &dataset, Graph &graph) {
         entryDegree[index] += 0;
         earliestStart[index] = 0;
 
-        for (const auto &edge : node.adj) {
-            int dest = edge.dest;
-
+        for (const auto &[dest, edge] : node.adj) {
             entryDegree[dest]++;
         }
     }
@@ -217,9 +212,7 @@ void scenario2_4(Dataset &dataset, Graph &graph) {
 
         auto node = nodes.find(v);
 
-        for (const auto &edge : node->second.adj) {
-            int w = edge.dest;
-
+        for (const auto &[w, edge] : node->second.adj) {
             if (earliestStart[w] < earliestStart[v] + edge.duration)
                 earliestStart[w] = earliestStart[v] + edge.duration;
             

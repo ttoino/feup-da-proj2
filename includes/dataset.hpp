@@ -117,6 +117,11 @@ public:
      */
     static std::vector<std::string> getAvailableDatasets();
 
+    /**
+     * @brief Creates visualizations ou of this dataset's scenarios
+     * 
+     * @return std::unordered_map<Visualization, std::string> 
+     */
     std::unordered_map<Visualization, std::string> render();
 };
 

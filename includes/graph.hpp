@@ -186,6 +186,12 @@ public:
      */
     void clear() { nodes.clear(); };
 
+    /**
+     * @brief Exports this graph as a .dot formatted file.
+     * 
+     * @param path the path to which the file will be exported
+     * @param paths the paths that constitute the various graphs
+     */
     void toDotFile(const std::string &path, const std::vector<std::pair<Graph, std::string>> paths = {});
 };
 

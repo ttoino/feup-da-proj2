@@ -21,29 +21,49 @@ class Dataset;
  * @brief Parameters to customize how Dataset::generate() generates datasets.
  */
 struct DatasetGenerationParams {
+    /** @brief The number of nodes to generate. */
     int numberOfNodes;
+    /** @brief The number of edges to generate. */
     int numberOfEdges;
 
+    /** @brief The minimum capacity edges will have. */
     unsigned int minEdgeCapacity;
+    /** @brief The maximum capacity edges will have. */
     unsigned int maxEdgeCapacity;
 
+    /** @brief The minimum duration edges will have. */
     unsigned int minEdgeDuration;
+    /** @brief The maximum duration edges will have. */
     unsigned int maxEdgeDuration;
 };
 
+/** @brief An enum representing a type of visualization to do on a dataset. */
 enum class Visualization {
+    /** @brief Show the whole graph. */
     DATASET,
+    /** @brief Show the paths from the first scenario over the whole graph. */
     SCENARIO_1,
+    /** @brief Show the path from scenario 1.1 over the whole graph. */
     SCENARIO_1_1,
+    /** @brief Show the path from scenario 1.1. */
     SCENARIO_1_1_ONLY,
+    /** @brief Show the path from scenario 1.2 over the whole graph. */
     SCENARIO_1_2,
+    /** @brief Show the path from scenario 1.2. */
     SCENARIO_1_2_ONLY,
+    /** @brief Show the paths from the second scenario over the whole graph. */
     SCENARIO_2,
+    /** @brief Show the path from scenario 2.1 over the whole graph. */
     SCENARIO_2_1,
+    /** @brief Show the path from scenario 2.1. */
     SCENARIO_2_1_ONLY,
+    /** @brief Show the path from scenario 2.2 over the whole graph. */
     SCENARIO_2_2,
+    /** @brief Show the path from scenario 2.2. */
     SCENARIO_2_2_ONLY,
+    /** @brief Show the path from scenario 2.3 over the whole graph. */
     SCENARIO_2_3,
+    /** @brief Show the path from scenario 2.3. */
     SCENARIO_2_3_ONLY
 };
 
@@ -54,13 +74,19 @@ enum class Visualization {
  */
 class Dataset {
 
+    /** @brief How many nodes the graph has. */
     int n = -1;
+    /** @brief The graph associated with this dataset. */
     Graph graph;
 
+    /** @brief The results from running the first scenario. */
     Scenario1Result scenario1Result;
+    /** @brief The results from running the second scenario. */
     Scenario2Result scenario2Result;
 
+    /** @brief Creates a dataset with n nodes and the given graph. */
     Dataset(const int n, const Graph &graph);
+    /** @brief Creates an empty dataset. */
     Dataset(){};
 
 public:
@@ -71,6 +97,11 @@ public:
      */
     Graph &getGraph() { return graph; }
 
+    /**
+     * @brief Get the number of nodes the graph associated with this dataset has
+     *
+     * @return int the number of nodes the graph associated with this dataset has
+     */
     int getN() { return n; }
 
     /**

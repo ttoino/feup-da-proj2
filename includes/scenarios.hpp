@@ -12,14 +12,22 @@
  * to the first scenario.
  */
 struct Scenario1Result {
+    /** @brief How much time scenario 1.1 took to run */
     std::chrono::microseconds runtime1_1{0};
+    /** @brief The capacity of the path from scenario 1.1 */
     int capacity1_1{-1};
+    /** @brief The number of edges in the path from scenario 1.1 */
     int connections1_1{-1};
+    /** @brief The path from scenario 1.1 */
     Graph path1_1{};
 
+    /** @brief How much time scenario 1.2 took to run */
     std::chrono::microseconds runtime1_2{0};
+    /** @brief The capacity of the path from scenario 1.2 */
     int capacity1_2{-1};
+    /** @brief The number of edges in the path from scenario 1.2 */
     int connections1_2{-1};
+    /** @brief The path from scenario 1.2 */
     Graph path1_2{};
 };
 
@@ -28,24 +36,39 @@ struct Scenario1Result {
  * to the second scenario.
  */
 struct Scenario2Result {
+    /** @brief How much time scenario 2.1 took to run */
     std::chrono::microseconds runtime2_1{0};
+    /** @brief The group size in scenario 2.1 */
     int groupSize2_1{-1};
+    /** @brief The path from scenario 2.1 */
     Graph path2_1{};
 
+    /** @brief How much time scenario 2.2 took to run */
     std::chrono::microseconds runtime2_2{0};
+    /** @brief The increase in group size in scenario 2.2 */
     int increase2_2{-1};
+    /** @brief Whether the increase in group size in scenario 2.2 requires a new path */
     bool requiresNewPath2_2{false};
+    /** @brief The path from scenario 2.2 */
     Graph path2_2{};
 
+    /** @brief How much time scenario 2.3 took to run */
     std::chrono::microseconds runtime2_3{0};
+    /** @brief The flow of path from scenario 2.3 */
     int maxFlow2_3{-1};
+    /** @brief The path from scenario 2.3 */
     Graph path2_3{};
 
+    /** @brief How much time scenario 2.4 took to run */
     std::chrono::microseconds runtime2_4{0};
+    /** @brief The earliest possible finishing time calculated in scenario 2.4 */
     int earliestFinish2_4{-1};
 
+    /** @brief How much time scenario 2.5 took to run */
     std::chrono::microseconds runtime2_5{0};
+    /** @brief The maximum waiting time calculated in scenario 2.4 */
     int maxWaitTime2_5{-1};
+    /** @brief The nodes where the waiting time is the maximum */
     std::vector<int> maxWaitNodes2_5{};
 };
 

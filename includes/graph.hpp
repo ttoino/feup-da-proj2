@@ -19,11 +19,27 @@ struct Edge {
      * @brief The destination node.
      */
     int dest = -1;
+    /**
+     * @brief This edge's capacity.
+     */
     int capacity = -1;
+    /**
+     * @brief This edge's duration.
+     */
     int duration = -1;
 
+    /**
+     * @brief Creates an edge with the specified values.
+     *
+     * @param dest The destination node.
+     * @param capacity This edge's capacity.
+     * @param duration This edge's duration.
+     */
     Edge(const int dest, const int capacity, const int duration)
         : dest(dest), capacity(capacity), duration(duration){};
+    /**
+     * @brief Creates an empty edge.
+     */
     Edge(){};
 
     bool operator==(const Edge &other) const { return dest == other.dest; }
@@ -44,24 +60,50 @@ struct Node {
      */
     std::unordered_map<int, Edge> adj{};
 
+    /**
+     * @brief This node's label.
+     */
     int label = -1;
+    /**
+     * @brief This node's parent (used in bfs).
+     */
     int parent = -1;
 
+    /**
+     * @brief Whether this node has been visited (used in bfs).
+     */
     bool visited = false;
 
-    int minTime = INT_MAX, maxTime = INT_MIN;
+    /**
+     * @brief Helper variable used in scenarios 2.4 and 2.5 to calculate the
+     * maximum wait time.
+     */
+    int minTime = INT_MAX;
+    /**
+     * @brief Helper variable used in scenarios 2.4 and 2.5 to calculate the
+     * maximum wait time.
+     */
+    int maxTime = INT_MIN;
 
-    // max(incoming-ES) - min(incoming-ES) [scenarios 2.4 and 2.5]
+    /**
+     * @brief This node's wait time.
+     */
     int waitTime = -1;
 
+    /**
+     * @brief Creates a node with the specified label
+     *
+     * @param label The node's label.
+     */
     Node(const int label) : label(label){};
+    /**
+     * @brief Creates an empty node.
+     */
     Node(){};
 };
 
 /**
- * @brief Holds data from a dataset to be used by different scenarios.
- *
- * @details Also has several static methods to make dataset management easier.
+ * @brief Represents a directed graph.
  */
 class Graph {
     /**
@@ -86,7 +128,15 @@ class Graph {
     void resetVisits();
 
 public:
+    /**
+     * @brief Creates an empty graph.
+     */
     Graph(){};
+    /**
+     * @brief Creates a graph with n nodes, labeled from 1 to n inclusive.
+     *
+     * @param n The number of nodes this graph will have.
+     */
     Graph(int n) : residualGraph(n + 1, std::vector<int>(n + 1)) {
         for (int i = 1; i <= n; ++i)
             nodes.insert({i, {i}});

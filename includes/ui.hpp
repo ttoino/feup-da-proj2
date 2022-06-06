@@ -223,6 +223,11 @@ class UserInterface {
      */
     void allScenariosMenu();
 
+    /**
+     * @brief Creates a graph representation of the given dataset.
+     * 
+     * @param dataset the dataset whose graph is to be represented visually
+     */
     void visualizeDatasetMenu(Dataset &dataset);
 
 public:
@@ -232,6 +237,7 @@ public:
      * @param dataset The currently selected dataset.
      */
     void show(Dataset &dataset);
+    
     /**
      * @brief Shows a message before the program exits.
      */

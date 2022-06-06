@@ -8,6 +8,10 @@
  */
 const std::string DATASETS_PATH = "datasets/";
 
+/**
+ * @brief Where the results of running the program are stored.
+ * 
+ */
 const std::string OUTPUT_PATH = "outputs/";
 /**
  * @brief Where the scenario results will be stored in the datasets folder.

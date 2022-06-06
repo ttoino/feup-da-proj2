@@ -7,6 +7,10 @@
 #include "utils.hpp"
 #include "graph.hpp"
 
+/**
+ * @brief Data structure holding result values from running simulations related to the first scenario 
+ * 
+ */
 struct Scenario1Result {
     std::chrono::microseconds runtime1_1{0};
     int capacity1_1{-1};
@@ -19,6 +23,10 @@ struct Scenario1Result {
     Graph path1_2{};
 };
 
+/**
+ * @brief Data structure holding result values from running simulations related to the second scenario 
+ * 
+ */
 struct Scenario2Result {
     std::chrono::microseconds runtime2_1{0};
     int groupSize2_1{-1};
@@ -41,6 +49,10 @@ struct Scenario2Result {
     std::vector<int> maxWaitNodes2_5{};
 };
 
+/**
+ * @brief Runs all scenarios, using all the available datasets.
+ * 
+ */
 void runAllScenarios();
 
 #include "dataset.hpp"

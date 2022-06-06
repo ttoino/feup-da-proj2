@@ -52,8 +52,25 @@ class Dataset {
     Dataset(){};
 
 public:
+    /**
+     * @brief Get the Graph object associated with this dataset
+     * 
+     * @return Graph& the Graph object associated with this dataset
+     */
     Graph &getGraph() { return graph; }
+
+    /**
+     * @brief Get the results for running the first scenario.
+     * 
+     * @return Scenario1Result& the results for running the first scenario
+     */
     Scenario1Result &getScenario1Result() { return scenario1Result; }
+    
+    /**
+     * @brief Get the results for running the second scenario.
+     * 
+     * @return Scenario1Result& the results for running the second scenario
+     */
     Scenario2Result &getScenario2Result() { return scenario2Result; }
 
     /**
@@ -86,6 +103,11 @@ public:
      */
     static std::vector<std::string> getAvailableDatasets();
 
+    /**
+     * @brief Converts this dataset into a .dot file formatted string
+     * 
+     * @return std::string the .dot file formatted string representing this dataset
+     */
     std::string toDotFile();
 };
 

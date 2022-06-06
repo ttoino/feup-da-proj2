@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <algorithm>
 
 #include "../includes/constants.hpp"
 #include "../includes/dataset.hpp"

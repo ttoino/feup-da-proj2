@@ -183,7 +183,7 @@ void scenario2_3(Dataset &dataset) {
 void scenario2_4(Dataset &dataset, Graph &graph) {
     auto tstart = std::chrono::high_resolution_clock::now();
 
-    auto nodes = graph.getNodes();
+    auto& nodes = graph.getNodes();
 
     std::unordered_map<int, int> earliestStart;
     std::unordered_map<int, int> entryDegree;
@@ -253,7 +253,7 @@ void scenario2_5(Dataset &dataset, Graph &graph) {
     auto &result = dataset.getScenario2Result();
 
     for (const auto &[index, node] : nodes)
-        waitTimes.insert({node.maxTime - node.minTime, index});
+        waitTimes.insert({index != 1 ? node.maxTime - node.minTime : 0, index});
 
     result.maxWaitTime2_5 = waitTimes.rbegin()->first;
 

@@ -125,7 +125,8 @@ std::unordered_map<Visualization, std::string> Dataset::render() {
             m.insert({Visualization::SCENARIO_1_1_ONLY,
                       OUTPUT_PATH + "1.1only.svg"});
 
-        graph.toDotFile(OUTPUT_PATH + "1.1.dot", {scenario1Result.path1_1});
+        graph.toDotFile(OUTPUT_PATH + "1.1.dot",
+                        {{scenario1Result.path1_1, "Maximum capacity path"}});
         command = {};
         command << "sfdp -T svg " << OUTPUT_PATH << "1.1.dot > " << OUTPUT_PATH
                 << "1.1.svg";
@@ -145,7 +146,9 @@ std::unordered_map<Visualization, std::string> Dataset::render() {
             m.insert({Visualization::SCENARIO_1_2_ONLY,
                       OUTPUT_PATH + "1.2only.svg"});
 
-        graph.toDotFile(OUTPUT_PATH + "1.2.dot", {scenario1Result.path1_2});
+        graph.toDotFile(
+            OUTPUT_PATH + "1.2.dot",
+            {{scenario1Result.path1_2, "Minimum connections path"}});
         command = {};
         command << "sfdp -T svg " << OUTPUT_PATH << "1.2.dot > " << OUTPUT_PATH
                 << "1.2.svg";
@@ -155,14 +158,18 @@ std::unordered_map<Visualization, std::string> Dataset::render() {
     }
 
     // 1.1 and 1.2
-    if (scenario1Result.capacity1_1 != -1 && scenario1Result.capacity1_2 != -1) {
-        graph.toDotFile(OUTPUT_PATH + "1.1.dot", {scenario1Result.path1_1, scenario1Result.path1_2});
+    if (scenario1Result.capacity1_1 != -1 &&
+        scenario1Result.capacity1_2 != -1) {
+        graph.toDotFile(
+            OUTPUT_PATH + "1.dot",
+            {{scenario1Result.path1_1, "Maximum capacity path"},
+             {scenario1Result.path1_2, "Minimum connections path"}});
         command = {};
-        command << "sfdp -T svg " << OUTPUT_PATH << "1.1.dot > " << OUTPUT_PATH
-                << "1.1.svg";
+        command << "sfdp -T svg " << OUTPUT_PATH << "1.dot > " << OUTPUT_PATH
+                << "1.svg";
         r = system(command.str().c_str());
         if (!r)
-            m.insert({Visualization::SCENARIO_1, OUTPUT_PATH + "1.1.svg"});
+            m.insert({Visualization::SCENARIO_1, OUTPUT_PATH + "1.svg"});
     }
 
     // 2.1
@@ -176,7 +183,10 @@ std::unordered_map<Visualization, std::string> Dataset::render() {
             m.insert({Visualization::SCENARIO_2_1_ONLY,
                       OUTPUT_PATH + "2.1only.svg"});
 
-        graph.toDotFile(OUTPUT_PATH + "2.1.dot", {scenario2Result.path2_1});
+        std::stringstream label{};
+        label << "Path for group with size " << scenario2Result.groupSize2_1;
+        graph.toDotFile(OUTPUT_PATH + "2.1.dot",
+                        {{scenario2Result.path2_1, label.str()}});
         command = {};
         command << "sfdp -T svg " << OUTPUT_PATH << "2.1.dot > " << OUTPUT_PATH
                 << "2.1.svg";
@@ -196,7 +206,11 @@ std::unordered_map<Visualization, std::string> Dataset::render() {
             m.insert({Visualization::SCENARIO_2_2_ONLY,
                       OUTPUT_PATH + "2.2only.svg"});
 
-        graph.toDotFile(OUTPUT_PATH + "2.2.dot", {scenario2Result.path2_2});
+        std::stringstream label{};
+        label << "Path for group with size " << scenario2Result.groupSize2_1
+              << " + " << scenario2Result.increase2_2;
+        graph.toDotFile(OUTPUT_PATH + "2.2.dot",
+                        {{scenario2Result.path2_2, label.str()}});
         command = {};
         command << "sfdp -T svg " << OUTPUT_PATH << "2.2.dot > " << OUTPUT_PATH
                 << "2.2.svg";
@@ -216,13 +230,45 @@ std::unordered_map<Visualization, std::string> Dataset::render() {
             m.insert({Visualization::SCENARIO_2_3_ONLY,
                       OUTPUT_PATH + "2.3only.svg"});
 
-        graph.toDotFile(OUTPUT_PATH + "2.3.dot", {scenario2Result.path2_3});
+        graph.toDotFile(OUTPUT_PATH + "2.3.dot",
+                        {{scenario2Result.path2_3, "Path with maximum flow"}});
         command = {};
         command << "sfdp -T svg " << OUTPUT_PATH << "2.3.dot > " << OUTPUT_PATH
                 << "2.3.svg";
         r = system(command.str().c_str());
         if (!r)
             m.insert({Visualization::SCENARIO_2_3, OUTPUT_PATH + "2.3.svg"});
+    }
+
+    // 2
+    if ((scenario2Result.groupSize2_1 != -1) + (scenario2Result.increase2_2 != -1) + (scenario2Result.maxFlow2_3 != -1) > 1) {
+        std::vector<std::pair<Graph, std::string>> paths{};
+
+        if (scenario2Result.groupSize2_1 != -1) {
+            std::stringstream label{};
+            label << "Path for group with size "
+                  << scenario2Result.groupSize2_1;
+            paths.emplace_back(scenario2Result.path2_1, label.str());
+        }
+
+        if (scenario2Result.increase2_2 != -1) {
+            std::stringstream label{};
+            label << "Path for group with size " << scenario2Result.groupSize2_1
+                << " + " << scenario2Result.increase2_2;
+            paths.emplace_back(scenario2Result.path2_2, label.str());
+        }
+
+        if (scenario2Result.maxFlow2_3 != -1) {
+            paths.emplace_back(scenario2Result.path2_3, "Path with maximum flow");
+        }
+
+        graph.toDotFile(OUTPUT_PATH + "2.dot", paths);
+        command = {};
+        command << "sfdp -T svg " << OUTPUT_PATH << "2.dot > " << OUTPUT_PATH
+                << "2.svg";
+        r = system(command.str().c_str());
+        if (!r)
+            m.insert({Visualization::SCENARIO_2, OUTPUT_PATH + "2.svg"});
     }
 
     return m;

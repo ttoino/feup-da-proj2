@@ -531,10 +531,7 @@ void UserInterface::visualizeDatasetMenu(Dataset &dataset) {
          Visualization::SCENARIO_2_2_ONLY},
         {"Visualize max flow path", Visualization::SCENARIO_2_3},
         {"Visualize max flow path only", Visualization::SCENARIO_2_3_ONLY},
-        {"Visualize earliest finish", Visualization::SCENARIO_2_4},
-        {"Visualize earliest finish only", Visualization::SCENARIO_2_4_ONLY},
-        {"Visualize max wait time", Visualization::SCENARIO_2_5},
-        {"Visualize max wait time only", Visualization::SCENARIO_2_5_ONLY},
+        {"Visualize all three paths", Visualization::SCENARIO_2},
     },
         options{};
 

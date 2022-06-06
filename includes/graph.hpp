@@ -186,7 +186,7 @@ public:
      */
     void clear() { nodes.clear(); };
 
-    void toDotFile(const std::string &path, const std::vector<Graph> paths = {});
+    void toDotFile(const std::string &path, const std::vector<std::pair<Graph, std::string>> paths = {});
 };
 
 #endif

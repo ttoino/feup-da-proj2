@@ -44,11 +44,7 @@ enum class Visualization {
     SCENARIO_2_2,
     SCENARIO_2_2_ONLY,
     SCENARIO_2_3,
-    SCENARIO_2_3_ONLY,
-    SCENARIO_2_4,
-    SCENARIO_2_4_ONLY,
-    SCENARIO_2_5,
-    SCENARIO_2_5_ONLY
+    SCENARIO_2_3_ONLY
 };
 
 /**

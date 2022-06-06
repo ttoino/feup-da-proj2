@@ -141,14 +141,55 @@ void Graph::addNode(int i, const Node& node) {
     this->nodes.insert({i, node});
 }
 
-void Graph::toDotFile(const std::string &path, const std::vector<Graph> paths) {
+void Graph::toDotFile(const std::string &path,
+                      const std::vector<std::pair<Graph, std::string>> paths) {
     static const std::unordered_map<int, std::string> colors{
-        {0, "black"}, {1, "red"}, {2, "blue"}, {3, "purple"}, {4, "green"}
-    };
+        {0, "black"}, {1, "red"},    {2, "blue"}, {3, "purple"},
+        {4, "green"}, {5, "yellow"}, {6, "cyan"}, {7, "gray"}};
 
     std::ofstream out{path};
 
     out << DOT_HEADER;
+
+    if (!paths.empty()) {
+        out << "{ Legend [shape=none, margin=0, label=<"
+               "<table border=\"0\" cellborder=\"1\" cellspacing=\"0\" "
+               "cellpadding=\"4\">";
+
+        for (int i = 0; i < paths.size(); ++i)
+            out << "<tr>"
+                   "<td bgcolor=\""
+                << colors.at(1 << i) << "\"></td><td>" << i + 1 << ". "
+                << paths.at(i).second
+                << "</td>"
+                   "</tr>";
+
+        for (int i = 1; i < 1 << paths.size(); ++i) {
+            if ((i & (i - 1)) == 0) continue;
+
+            bool first = true;
+
+            out << "<tr>"
+                   "<td bgcolor=\""
+                << colors.at(i) << "\"></td><td>";
+
+            for (int j = 0; j < paths.size(); ++j) {
+                if (i & (1 << j)) {
+                    if (!first)
+                        out << " + ";
+
+                    out << j + 1;
+                    first = false;
+                }
+            }
+
+            out << "</td>"
+                   "</tr>";
+        }
+
+        out << "</table>"
+               ">]}\n";
+    }
 
     std::map<std::pair<int, int>, int> edges{};
 
@@ -157,7 +198,7 @@ void Graph::toDotFile(const std::string &path, const std::vector<Graph> paths) {
             edges[{src, dest}] = 0;
 
     for (int i = 0; i < paths.size(); ++i)
-        for (auto &[src, node] : paths.at(i).nodes)
+        for (auto &[src, node] : paths.at(i).first.nodes)
             for (auto &[dest, edge] : node.adj)
                 edges[{src, dest}] |= 1 << i;
 

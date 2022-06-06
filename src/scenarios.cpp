@@ -163,7 +163,7 @@ void scenario2_2(Dataset &dataset, int increase) {
     result.path2_2 = graph;
 
     if (result.requiresNewPath2_2) {
-        auto [flow, graph] = dataset.getGraph().edmondsKarp(1, dataset.getN());
+        auto [flow, graph] = dataset.getGraph().edmondsKarp(1, dataset.getN(), newGroupSize);
         result.path2_2 = graph;
 
         if (flow < newGroupSize) {

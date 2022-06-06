@@ -458,6 +458,20 @@ void UserInterface::scenario2_5Menu(Dataset &dataset) {
     std::cout << "Maximum wait time: " << result.maxWaitTime2_5
               << "\nRuntime: " << result.runtime2_5.count() << "μs\n\n";
 
+    if (!result.maxWaitNodes2_5.empty()) {
+        std::cout << "Maximum wait time at node" << ((result.maxWaitNodes2_5.size() > 1) ? "s" : "") << ": ";
+
+        std::cout << *(result.maxWaitNodes2_5.begin());
+
+        for (auto it = (result.maxWaitNodes2_5.begin() + 1); it < (result.maxWaitNodes2_5.end() - 1); ++it)
+            std::cout << ", " << *it;
+
+        if (result.maxWaitNodes2_5.size() > 1)
+            std::cout << " and " << *(result.maxWaitNodes2_5.end() - 1);
+
+        std::cout << "\n\n";
+    }
+
     getStringInput("Press enter to continue ");
 
     currentMenu = Menu::MAIN;

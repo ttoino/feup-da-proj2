@@ -74,6 +74,8 @@ class Graph {
      */
     std::unordered_map<int, Node> nodes;
 
+    std::vector<std::vector<int>> residualGraph;
+
     /**
      * @brief Marks all nodes as unvisited.
      *
@@ -82,7 +84,7 @@ class Graph {
 
 public:
     Graph(){};
-    Graph(int n) {
+    Graph(int n) : residualGraph(n + 1, std::vector<int>(n + 1)) {
         for (int i = 1; i <= n; ++i)
             nodes.insert({i, {i}});
     };
@@ -124,8 +126,7 @@ public:
      *
      * @return The max flow that is available in the path from s to t
      */
-    int edmondsKarpBFS(int s, int t,
-                       std::vector<std::vector<int>> &residualGraph);
+    int edmondsKarpBFS(int s, int t);
 
     std::pair<int, Graph> edmondsKarp(int start, int end, int groupSize = INT_MAX);
 

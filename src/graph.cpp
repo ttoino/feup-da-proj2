@@ -49,8 +49,7 @@ void Graph::bfs(int s, int t) {
 bfs_exitwhile: return;
 }
 
-int Graph::edmondsKarpBFS(int s, int t,
-                          std::vector<std::vector<int>> &residualGraph) {
+int Graph::edmondsKarpBFS(int s, int t) {
     resetVisits();
 
     nodes.at(s).parent = s;
@@ -82,22 +81,16 @@ std::pair<int, Graph> Graph::edmondsKarp(int start, int end, int groupSize) {
     Graph graph{};
 
     int flow = 0, new_flow = 0;
-    std::vector<std::vector<int>> residualGraph(
-        nodes.size() + 1, std::vector<int>(nodes.size() + 1));
 
     for (auto &[src, node] : nodes)
         for (auto &[dest, e] : node.adj)
             residualGraph.at(src).at(dest) = e.capacity;
 
-    std::cout << "Residual graph built!\n";
-
     while (flow < groupSize) {
-        new_flow = edmondsKarpBFS(start, end, residualGraph);
+        new_flow = edmondsKarpBFS(start, end);
 
         if (new_flow == -1)
             break;
-
-        std::cout << "New flow " << new_flow << '\n';
 
         // we found a new valid augment path, update path graph
 
@@ -121,8 +114,6 @@ std::pair<int, Graph> Graph::edmondsKarp(int start, int end, int groupSize) {
         // path = parent;
         flow += new_flow;
         int cur = end;
-
-        std::cout << "Flow is at " << flow << '\n';
 
         while (cur != start) {
             int prev = nodes.at(cur).parent;

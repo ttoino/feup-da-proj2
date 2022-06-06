@@ -2,10 +2,10 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <map>
 #include <queue>
 #include <set>
 #include <sstream>
-#include <map>
 
 #include "../includes/constants.hpp"
 #include "../includes/scenarios.hpp"
@@ -131,8 +131,8 @@ void scenario1_2(Dataset &dataset) {
 void scenario2_1(Dataset &dataset, int groupSize) {
     auto tstart = std::chrono::high_resolution_clock::now();
 
-    auto [flow, graph] = dataset.getGraph().edmondsKarp(
-        1, dataset.getN(), groupSize);
+    auto [flow, graph] =
+        dataset.getGraph().edmondsKarp(1, dataset.getN(), groupSize);
 
     auto &result = dataset.getScenario2Result();
 
@@ -163,7 +163,8 @@ void scenario2_2(Dataset &dataset, int increase) {
     result.path2_2 = graph;
 
     if (result.requiresNewPath2_2) {
-        auto [flow, graph] = dataset.getGraph().edmondsKarp(1, dataset.getN(), newGroupSize);
+        auto [flow, graph] =
+            dataset.getGraph().edmondsKarp(1, dataset.getN(), newGroupSize);
         result.path2_2 = graph;
 
         if (flow < newGroupSize) {
@@ -182,8 +183,7 @@ void scenario2_2(Dataset &dataset, int increase) {
 void scenario2_3(Dataset &dataset) {
     auto tstart = std::chrono::high_resolution_clock::now();
 
-    auto [flow, graph] =
-        dataset.getGraph().edmondsKarp(1, dataset.getN());
+    auto [flow, graph] = dataset.getGraph().edmondsKarp(1, dataset.getN());
 
     auto &result = dataset.getScenario2Result();
     result.path2_3 = graph;
@@ -198,7 +198,7 @@ void scenario2_3(Dataset &dataset) {
 void scenario2_4(Dataset &dataset, Graph &graph) {
     auto tstart = std::chrono::high_resolution_clock::now();
 
-    auto& nodes = graph.getNodes();
+    auto &nodes = graph.getNodes();
 
     std::unordered_map<int, int> earliestStart;
     std::unordered_map<int, int> entryDegree;
@@ -233,8 +233,8 @@ void scenario2_4(Dataset &dataset, Graph &graph) {
         for (const auto &[w, edge] : node->second.adj) {
             if (earliestStart[w] < earliestStart[v] + edge.duration)
                 earliestStart[w] = earliestStart[v] + edge.duration;
-            
-            auto& destNode = nodes[w];
+
+            auto &destNode = nodes[w];
             destNode.maxTime = std::max(destNode.maxTime, earliestStart[w]);
             destNode.minTime = std::min(destNode.minTime, earliestStart[w]);
 

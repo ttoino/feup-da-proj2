@@ -7,10 +7,8 @@
  * @brief Where the different datasets are stored.
  */
 const std::string DATASETS_PATH = "datasets/";
-
 /**
  * @brief Where the results of running the program are stored.
- * 
  */
 const std::string OUTPUT_PATH = "outputs/";
 /**
@@ -25,12 +23,14 @@ const std::string OUTPUT_HEADER = "dataset,"
                                   "capacity1_2,connections1_2,runtime1_2,"
                                   "groupSize2_1,runtime2_1,"
                                   "increase2_2,requiresNewPath2_2,runtime2_2,"
-                                  "maxFlow2_3,runtime2_3"
+                                  "maxFlow2_3,runtime2_3,"
                                   "earliestFinish2_4,runtime2_4,"
                                   "maxWaitTime2_5,runtime2_5\n";
+/**
+ * @brief The header to be printed at the start of dot files.
+ */
 const std::string DOT_HEADER = "digraph {\n"
                                "overlap=scale\n"
-                               "splines=true\n"
                                "node [shape=circle]\n";
 /**
  * @brief How many items to print in each page in UserInterface#paginatedMenu().

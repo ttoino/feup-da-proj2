@@ -66,23 +66,23 @@ class Dataset {
 public:
     /**
      * @brief Get the Graph object associated with this dataset
-     * 
+     *
      * @return Graph& the Graph object associated with this dataset
      */
     Graph &getGraph() { return graph; }
-    
+
     int getN() { return n; }
 
     /**
      * @brief Get the results for running the first scenario.
-     * 
+     *
      * @return Scenario1Result& the results for running the first scenario
      */
     Scenario1Result &getScenario1Result() { return scenario1Result; }
-    
+
     /**
      * @brief Get the results for running the second scenario.
-     * 
+     *
      * @return Scenario1Result& the results for running the second scenario
      */
     Scenario2Result &getScenario2Result() { return scenario2Result; }
@@ -119,8 +119,8 @@ public:
 
     /**
      * @brief Creates visualizations ou of this dataset's scenarios
-     * 
-     * @return std::unordered_map<Visualization, std::string> 
+     *
+     * @return std::unordered_map<Visualization, std::string>
      */
     std::unordered_map<Visualization, std::string> render();
 };

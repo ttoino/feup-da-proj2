@@ -1,9 +1,9 @@
-#include <queue>
-#include <list>
 #include <algorithm>
-#include <sstream>
 #include <fstream>
+#include <list>
 #include <map>
+#include <queue>
+#include <sstream>
 #include <unordered_map>
 
 #include "../includes/constants.hpp"
@@ -12,7 +12,7 @@
 
 // Add edge from source to destination with a certain weight
 void Graph::addEdge(Node &src, Node &dest, const int capacity,
-                      const int duration) {
+                    const int duration) {
     src.adj.insert({dest.label, {dest.label, capacity, duration}});
 }
 
@@ -48,7 +48,8 @@ void Graph::bfs(int s, int t) {
             }
         }
     }
-bfs_exitwhile: return;
+bfs_exitwhile:
+    return;
 }
 
 int Graph::edmondsKarpBFS(int s, int t) {
@@ -127,19 +128,15 @@ std::pair<int, Graph> Graph::edmondsKarp(int start, int end, int groupSize) {
 }
 
 void Graph::resetVisits() {
-    for (auto& [index, node] : nodes) {
+    for (auto &[index, node] : nodes) {
         node.visited = false;
         node.parent = -1;
     }
 }
 
-void Graph::addNode(int i) {
-    this->nodes.insert({i, {i}});
-}
+void Graph::addNode(int i) { this->nodes.insert({i, {i}}); }
 
-void Graph::addNode(int i, const Node& node) {
-    this->nodes.insert({i, node});
-}
+void Graph::addNode(int i, const Node &node) { this->nodes.insert({i, node}); }
 
 void Graph::toDotFile(const std::string &path,
                       const std::vector<std::pair<Graph, std::string>> paths) {
@@ -150,6 +147,9 @@ void Graph::toDotFile(const std::string &path,
     std::ofstream out{path};
 
     out << DOT_HEADER;
+
+    if (nodes.size() < 100)
+        out << "splines=true\n";
 
     if (!paths.empty()) {
         out << "{ Legend [shape=none, margin=0, label=<"
@@ -165,7 +165,8 @@ void Graph::toDotFile(const std::string &path,
                    "</tr>";
 
         for (int i = 1; i < 1 << paths.size(); ++i) {
-            if ((i & (i - 1)) == 0) continue;
+            if ((i & (i - 1)) == 0)
+                continue;
 
             bool first = true;
 

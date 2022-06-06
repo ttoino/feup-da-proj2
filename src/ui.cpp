@@ -1,11 +1,11 @@
+#include <algorithm>
 #include <cmath>
 #include <filesystem>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <fstream>
-#include <algorithm>
 
 #include "../includes/constants.hpp"
 #include "../includes/dataset.hpp"
@@ -296,10 +296,8 @@ void UserInterface::scenario1_1Menu(Dataset &dataset) {
     auto &result = dataset.getScenario1Result();
 
     std::cout << "Max capacity: " << result.capacity1_1
-              << "\nNumber of connections: "
-              << result.connections1_1
-              << "\nRuntime: "
-              << result.runtime1_1.count() << "μs\n\n";
+              << "\nNumber of connections: " << result.connections1_1
+              << "\nRuntime: " << result.runtime1_1.count() << "μs\n\n";
 
     getStringInput("Press enter to continue ");
 
@@ -312,13 +310,11 @@ void UserInterface::scenario1_2Menu(Dataset &dataset) {
     auto &result = dataset.getScenario1Result();
 
     std::cout << "Max capacity: " << result.capacity1_2
-              << "\nNumber of connections: "
-              << result.connections1_2
-              << "\nRuntime: "
-              << result.runtime1_2.count() << "μs\n\n";
+              << "\nNumber of connections: " << result.connections1_2
+              << "\nRuntime: " << result.runtime1_2.count() << "μs\n\n";
 
     getStringInput("Press enter to continue ");
-    
+
     currentMenu = Menu::MAIN;
 }
 
@@ -469,11 +465,13 @@ void UserInterface::scenario2_5Menu(Dataset &dataset) {
               << "\nRuntime: " << result.runtime2_5.count() << "μs\n\n";
 
     if (!result.maxWaitNodes2_5.empty()) {
-        std::cout << "Maximum wait time at node" << ((result.maxWaitNodes2_5.size() > 1) ? "s" : "") << ": ";
+        std::cout << "Maximum wait time at node"
+                  << ((result.maxWaitNodes2_5.size() > 1) ? "s" : "") << ": ";
 
         std::cout << *(result.maxWaitNodes2_5.begin());
 
-        for (auto it = (result.maxWaitNodes2_5.begin() + 1); it < (result.maxWaitNodes2_5.end() - 1); ++it)
+        for (auto it = (result.maxWaitNodes2_5.begin() + 1);
+             it < (result.maxWaitNodes2_5.end() - 1); ++it)
             std::cout << ", " << *it;
 
         if (result.maxWaitNodes2_5.size() > 1)
@@ -503,7 +501,8 @@ void UserInterface::renderVisualizationsMenu(Dataset &dataset) {
     visualizations = dataset.render();
 
     if (visualizations.empty()) {
-        std::cout << "\nCould't render visualizations, make sure graphviz is installed.\n";
+        std::cout << "\nCould't render visualizations, make sure graphviz is "
+                     "installed.\n";
 
         getStringInput("\nPress enter to continue ");
         currentMenu = Menu::MAIN;

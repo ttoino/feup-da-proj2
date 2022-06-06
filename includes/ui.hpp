@@ -24,22 +24,31 @@ enum class Menu {
     /** @brief Allows the user to generate a new dataset. */
     GENERATE_DATASET,
 
+    /** @brief Renders the dataset visualizations. */
     RENDER_VISUALIZATIONS,
+    /** @brief Shows the dataset visualizations to the user. */
     VISUALIZE_DATASET,
 
     /** @brief Runs scenario 1. */
     SCENARIO_ONE,
 
+    /** @brief Runs scenario 1.1. */
     SCENARIO_1_1,
+    /** @brief Runs scenario 1.2. */
     SCENARIO_1_2,
 
     /** @brief Runs scenario 2. */
     SCENARIO_TWO,
 
+    /** @brief Runs scenario 2.1. */
     SCENARIO_2_1,
+    /** @brief Runs scenario 2.2. */
     SCENARIO_2_2,
+    /** @brief Runs scenario 2.3. */
     SCENARIO_2_3,
+    /** @brief Runs scenario 2.4. */
     SCENARIO_2_4,
+    /** @brief Runs scenario 2.5. */
     SCENARIO_2_5,
 
     /** @brief Runs all scenarios. */
@@ -70,6 +79,9 @@ class UserInterface {
      */
     std::string errorMessage{};
 
+    /**
+     * @brief The dataset visualizations generated in renderVisualizationsMenu().
+     */
     std::unordered_map<Visualization, std::string> visualizations{};
 
     /**
@@ -204,8 +216,18 @@ class UserInterface {
      * @param dataset The dataset to use
      */
     void scenarioOneMenu(Dataset &dataset);
-    
+
+    /**
+     * @brief Runs scenario 1.1.
+     *
+     * @param dataset The dataset to use
+     */
     void scenario1_1Menu(Dataset &dataset);
+    /**
+     * @brief Runs scenario 1.2.
+     *
+     * @param dataset The dataset to use
+     */
     void scenario1_2Menu(Dataset &dataset);
 
     /**
@@ -214,11 +236,36 @@ class UserInterface {
      * @param dataset The dataset to use
      */
     void scenarioTwoMenu(Dataset &dataset);
-    
+
+    /**
+     * @brief Runs scenario 2.1.
+     *
+     * @param dataset The dataset to use
+     */
     void scenario2_1Menu(Dataset &dataset);
+    /**
+     * @brief Runs scenario 2.2.
+     *
+     * @param dataset The dataset to use
+     */
     void scenario2_2Menu(Dataset &dataset);
+    /**
+     * @brief Runs scenario 2.3.
+     *
+     * @param dataset The dataset to use
+     */
     void scenario2_3Menu(Dataset &dataset);
+    /**
+     * @brief Runs scenario 2.4.
+     *
+     * @param dataset The dataset to use
+     */
     void scenario2_4Menu(Dataset &dataset);
+    /**
+     * @brief Runs scenario 2.5.
+     *
+     * @param dataset The dataset to use
+     */
     void scenario2_5Menu(Dataset &dataset);
 
     /**
@@ -226,7 +273,17 @@ class UserInterface {
      */
     void allScenariosMenu();
 
+    /**
+     * @brief Renders the dataset visualizations.
+     *
+     * @param dataset The dataset to use
+     */
     void renderVisualizationsMenu(Dataset &dataset);
+    /**
+     * @brief Shows the dataset visualizations to the user.
+     *
+     * @param dataset The dataset to use
+     */
     void visualizeDatasetMenu(Dataset &dataset);
 
 public:
@@ -236,7 +293,7 @@ public:
      * @param dataset The currently selected dataset.
      */
     void show(Dataset &dataset);
-    
+
     /**
      * @brief Shows a message before the program exits.
      */

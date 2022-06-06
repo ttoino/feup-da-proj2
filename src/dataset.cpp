@@ -59,7 +59,7 @@ Dataset Dataset::generate(const std::string &name,
     Graph graph{params.numberOfNodes};
     auto &nodesMap = graph.getNodes();
 
-    std::vector<std::pair<int, int>>edges{};
+    std::vector<std::pair<int, int>> edges{};
 
     for (int i = 1; i < params.numberOfNodes; ++i)
         for (int j = i + 1; j <= params.numberOfNodes; ++j)
@@ -69,21 +69,22 @@ Dataset Dataset::generate(const std::string &name,
     std::random_device rd{};
     std::mt19937 gen{rd()};
 
-    std::uniform_int_distribution
-        edgeCapacityDist{params.minEdgeCapacity, params.maxEdgeCapacity},
+    std::uniform_int_distribution edgeCapacityDist{params.minEdgeCapacity,
+                                                   params.maxEdgeCapacity},
         edgeDurationDist{params.minEdgeDuration, params.maxEdgeDuration};
 
     std::shuffle(edges.begin(), edges.end(), gen);
 
     for (int i = 0; i < params.numberOfEdges && i < edges.size(); i++) {
         auto e = edges.at(i);
-        
+
         int capacity = edgeCapacityDist(gen);
         int duration = edgeDurationDist(gen);
 
         graph.addEdge(e.first, e.second, capacity, duration);
 
-        out << e.first << ' ' << e.second << ' ' << capacity << ' ' << duration << '\n';
+        out << e.first << ' ' << e.second << ' ' << capacity << ' ' << duration
+            << '\n';
     }
 
     return {params.numberOfNodes, graph};
@@ -241,7 +242,10 @@ std::unordered_map<Visualization, std::string> Dataset::render() {
     }
 
     // 2
-    if ((scenario2Result.groupSize2_1 != -1) + (scenario2Result.increase2_2 != -1) + (scenario2Result.maxFlow2_3 != -1) > 1) {
+    if ((scenario2Result.groupSize2_1 != -1) +
+            (scenario2Result.increase2_2 != -1) +
+            (scenario2Result.maxFlow2_3 != -1) >
+        1) {
         std::vector<std::pair<Graph, std::string>> paths{};
 
         if (scenario2Result.groupSize2_1 != -1) {
@@ -254,12 +258,13 @@ std::unordered_map<Visualization, std::string> Dataset::render() {
         if (scenario2Result.increase2_2 != -1) {
             std::stringstream label{};
             label << "Path for group with size " << scenario2Result.groupSize2_1
-                << " + " << scenario2Result.increase2_2;
+                  << " + " << scenario2Result.increase2_2;
             paths.emplace_back(scenario2Result.path2_2, label.str());
         }
 
         if (scenario2Result.maxFlow2_3 != -1) {
-            paths.emplace_back(scenario2Result.path2_3, "Path with maximum flow");
+            paths.emplace_back(scenario2Result.path2_3,
+                               "Path with maximum flow");
         }
 
         graph.toDotFile(OUTPUT_PATH + "2.dot", paths);

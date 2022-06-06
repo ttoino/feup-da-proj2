@@ -73,8 +73,9 @@ class Graph {
     std::unordered_map<int, Node> nodes;
 
     /**
-     * @brief The residual graph resulting from performing flux calculations (related to the Edmonds-Karp algorithm).
-     * 
+     * @brief The residual graph resulting from performing flux calculations
+     * (related to the Edmonds-Karp algorithm).
+     *
      */
     std::vector<std::vector<int>> residualGraph;
 
@@ -93,22 +94,24 @@ public:
 
     /**
      * @brief Adds an edge between two nodes, identified by their label.
-     * 
+     *
      * @param src the label of the source node
      * @param dest the label of the destination node
      * @param capacity the capacity of the added edge
-     * @param duration the amount of time units needed to traverse the added edge
+     * @param duration the amount of time units needed to traverse the added
+     * edge
      */
     void addEdge(const int src, const int dest, const int capacity,
                  const int duration);
 
     /**
      * @brief Adds an edge between two nodes.
-     * 
+     *
      * @param src the source node
      * @param dest the destination node
      * @param capacity the capacity of the added edge
-     * @param duration the amount of time units needed to traverse the added edge
+     * @param duration the amount of time units needed to traverse the added
+     * edge
      */
     void addEdge(Node &src, Node &dest, const int capacity, const int duration);
 
@@ -149,13 +152,14 @@ public:
 
     /**
      * @brief Applies the Edmonds-Karp algorithm to this graph
-     * 
+     *
      * @param start the start node of the intended path
      * @param end the end node of the intended path
      * @param groupSize the desired size of a group traveling through this graph
-     * @return std::pair<int, Graph> 
+     * @return std::pair<int, Graph>
      */
-    std::pair<int, Graph> edmondsKarp(int start, int end, int groupSize = INT_MAX);
+    std::pair<int, Graph> edmondsKarp(int start, int end,
+                                      int groupSize = INT_MAX);
 
     /**
      * @brief Checks if an element with the given key exists
@@ -188,11 +192,12 @@ public:
 
     /**
      * @brief Exports this graph as a .dot formatted file.
-     * 
+     *
      * @param path the path to which the file will be exported
      * @param paths the paths that constitute the various graphs
      */
-    void toDotFile(const std::string &path, const std::vector<std::pair<Graph, std::string>> paths = {});
+    void toDotFile(const std::string &path,
+                   const std::vector<std::pair<Graph, std::string>> paths = {});
 };
 
 #endif

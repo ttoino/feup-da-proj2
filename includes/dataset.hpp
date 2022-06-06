@@ -13,6 +13,7 @@ class Dataset;
 #include <vector>
 
 #include "./graph.hpp"
+#include "./scenarios.hpp"
 
 #define INF (std::numeric_limits<int>::max() / 2)
 
@@ -42,35 +43,18 @@ enum EdmondsKarpUsage {
  */
 class Dataset {
 
-    Graph network, path;
+    Graph graph;
 
-    /**
-     * @brief This graph's residual graph in a matrix
-     *
-     */
-    std::vector<std::vector<int>> residualGraph;
+    Scenario1Result scenario1Result;
+    Scenario2Result scenario2Result;
 
     Dataset(const Graph &graph);
     Dataset(){};
 
-    /**
-     * @brief Applies breadth-first-search to the graph when running the
-     *        Edmonds-Karp algorithm
-     *
-     * @param s Starting node
-     * @param t Destination node
-     * @param parent Array to keep the path
-     * @param residualGraph The residual graph of a dataset
-     *
-     * @return The max flow that is available in the path from s to t
-     */
-    std::pair<int, std::list<int>>
-    edmondsKarpBFS(int s, int t, std::vector<int> &parent,
-                   std::vector<std::vector<int>> &residualGraph, bool isWholeGragh);
-
 public:
-    Graph &getGraph() { return network; }
-    Graph &getPath() { return path; }
+    Graph &getGraph() { return graph; }
+    Scenario1Result &getScenario1Result() { return scenario1Result; }
+    Scenario2Result &getScenario2Result() { return scenario2Result; }
 
     /**
      * @brief Loads a dataset from the given path.
@@ -102,23 +86,7 @@ public:
      */
     static std::vector<std::string> getAvailableDatasets();
 
-    /**
-     * @brief Implementation of the Edmonds-Karp algorithm
-     *
-     * @param s Starting node
-     * @param t Destination node
-     *
-     * @return The max flow from s to t
-     */
-    std::pair<int, std::vector<std::list<int>>>
-    edmondsKarp(int s, int t, EdmondsKarpUsage usage, int groupSize, bool isWholeGragh);
-
-    /**
-     * @brief Get the residual graph
-     *
-     * @return The matrix that represents the residual graph
-     */
-    std::vector<std::vector<int>> getResidualGraph() { return residualGraph; };
+    std::string toDotFile();
 };
 
 #endif

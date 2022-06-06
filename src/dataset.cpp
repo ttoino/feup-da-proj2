@@ -4,12 +4,13 @@
 #include <list>
 #include <queue>
 #include <random>
+#include <set>
 
 #include "../includes/constants.hpp"
 #include "../includes/dataset.hpp"
 #include "../includes/utils.hpp"
 
-Dataset::Dataset(const Graph &graph) : network(graph) {}
+Dataset::Dataset(const Graph &graph) : graph(graph) {}
 
 Dataset Dataset::load(const std::string &path) {
     if (path == "output.csv")
@@ -35,9 +36,6 @@ Dataset Dataset::load(const std::string &path) {
 
     Graph result{n};
 
-    std::vector<std::vector<int>> residualGraphCopy(n + 1,
-                                                    std::vector<int>(n + 1));
-
     for (int i = 0; i < t; ++i) {
         std::getline(dataset_file, line);
         tokens = split(line, ' ');
@@ -46,11 +44,9 @@ Dataset Dataset::load(const std::string &path) {
             capacity = stoul(tokens[2]), duration = stoul(tokens[3]);
 
         result.addEdge(src, dest, capacity, duration);
-        residualGraphCopy.at(src).at(dest) = capacity;
     }
 
     Dataset dataset{result};
-    dataset.residualGraph = residualGraphCopy;
     return dataset;
 }
 
@@ -107,115 +103,32 @@ std::vector<std::string> Dataset::getAvailableDatasets() {
     return result;
 }
 
-std::pair<int, std::list<int>>
-Dataset::edmondsKarpBFS(int s, int t, std::vector<int> &parent,
-                        std::vector<std::vector<int>> &residualGraph,
-                        bool isWholeGraph) {
-    std::list<int> path;
+std::string Dataset::toDotFile() {
+    std::stringstream out{};
 
-    auto &nodes = this->network.getNodes();
+    // out << "digraph {\n"
+    //        "overlap=scale\n"
+    //        "splines=true\n"
+    //        "node [shape=circle]\n";
 
-    for (unsigned i = 1; i <= this->network.getNodes().size(); i++)
-        parent.at(i) = -1;
+    // std::set<std::pair<int, int>> edges;
+    // for (auto p : path.getNodes())
+    //     for (auto e : p.second.adj)
+    //         out << '"' << p.first << "f\" -> \"" << e.dest
+    //             << "f\" [label=" << e.capacity << "]\n";
 
-    parent.at(s) = s;
-    std::queue<std::pair<int, int>> q;
-    q.push({s, INT_MAX});
+    // for (auto p : path.getNodes())
+    //     for (auto e : p.second.adj) {
+    //         edges.emplace(p.first, e.dest);
+    //         out << p.first << " -> " << e.dest << " [color=red]\n";
+    //     }
 
-    while (!q.empty()) {
-        int cur = q.front().first;
-        int flow = q.front().second;
-        q.pop();
+    // for (auto p : network.getNodes())
+    //     for (auto e : p.second.adj)
+    //         if (!edges.contains({p.first, e.dest}))
+    //             out << p.first << " -> " << e.dest << '\n';
 
-        for (Edge next : nodes.at(cur).adj) {
-            int dest = next.dest;
+    // out << "}\n";
 
-            if (parent.at(dest) == -1 && residualGraph.at(cur).at(dest) > 0) {
-                parent.at(dest) = cur;
-                path.emplace_back(dest);
-                int new_flow = std::min(flow, residualGraph.at(cur).at(dest));
-
-                if (dest == t)
-                    return {new_flow, path};
-
-                q.push({dest, new_flow});
-            }
-        }
-    }
-
-    return {0, std::list<int>()};
-}
-
-std::pair<int, std::vector<std::list<int>>>
-Dataset::edmondsKarp(int s, int t, EdmondsKarpUsage usage, int groupSize,
-                     bool isWholeGraph) {
-    // ensure old paths don't mess-up this instance of calculations
-    if (isWholeGraph)
-        this->path.clear();
-
-    auto &nodes =
-        isWholeGraph ? this->network.getNodes() : this->path.getNodes();
-
-    int flow = 0, new_flow = 0;
-    std::vector<int> parent(this->network.getNodes().size() + 1);
-    std::list<int> bfs_path;
-    std::vector<std::list<int>> paths;
-    std::pair<int, std::list<int>> bfsResult;
-    std::vector<std::vector<int>> residualGraph = this->getResidualGraph();
-
-    while (usage == EdmondsKarpUsage::DEFAULT ||
-           (usage == EdmondsKarpUsage::CUSTOM && flow < groupSize)) {
-        bfsResult = edmondsKarpBFS(s, t, parent, residualGraph, isWholeGraph);
-        new_flow = bfsResult.first;
-        bfs_path = bfsResult.second;
-
-        if (new_flow == 0)
-            break;
-
-        // we found a new valid augment path, update path graph
-
-        int currentNode = this->network.getNodes().size();
-        do {
-            int parentNode = parent.at(currentNode);
-
-            auto startNode = this->network.getNode(parentNode);
-            auto destNode = this->network.getNode(currentNode);
-
-            auto startNodeEdges = startNode.adj;
-
-            auto edge =
-                std::find_if(startNodeEdges.begin(), startNodeEdges.end(),
-                             [&destNode](const Edge &edge) -> bool {
-                                 return edge.dest == destNode.label;
-                             });
-
-            if (edge == startNodeEdges.end())
-                continue;
-
-            if (!this->path.hasNode(startNode.label))
-                this->path.addNode(startNode.label);
-
-            if (!this->path.hasNode(destNode.label))
-                this->path.addNode(destNode.label);
-
-            this->path.addEdge(startNode.label, destNode.label, edge->capacity,
-                               edge->duration);
-
-            currentNode = parentNode;
-        } while (currentNode != s);
-
-        // path = parent;
-        paths.push_back(bfs_path);
-        flow += new_flow;
-        int cur = t;
-
-        while (cur != s) {
-            int prev = parent.at(cur);
-            residualGraph.at(prev).at(cur) -= new_flow;
-            residualGraph.at(cur).at(prev) += new_flow;
-            cur = prev;
-        }
-    }
-
-    return {flow, paths};
+    return out.str();
 }

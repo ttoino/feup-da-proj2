@@ -28,13 +28,21 @@ enum class Menu {
 
     /** @brief Runs scenario 1. */
     SCENARIO_ONE,
+
+    SCENARIO_1_1,
+    SCENARIO_1_2,
+
     /** @brief Runs scenario 2. */
     SCENARIO_TWO,
+
+    SCENARIO_2_1,
+    SCENARIO_2_2,
+    SCENARIO_2_3,
+    SCENARIO_2_4,
+    SCENARIO_2_5,
+
     /** @brief Runs all scenarios. */
     ALL_SCENARIOS,
-
-    /** @brief Shows the results of a scenario. */
-    RESULTS,
 
     /** @brief Exits the program. */
     EXIT
@@ -60,11 +68,6 @@ class UserInterface {
      * @brief The error message to show.
      */
     std::string errorMessage{};
-
-    /**
-     * @brief The result that is shown in resultsMenu().
-     */
-    ScenarioResult result;
 
     /**
      * @brief Helper method to show a menu with options.
@@ -198,6 +201,9 @@ class UserInterface {
      * @param dataset The dataset to use
      */
     void scenarioOneMenu(Dataset &dataset);
+    
+    void scenario1_1Menu(Dataset &dataset);
+    void scenario1_2Menu(Dataset &dataset);
 
     /**
      * @brief Runs scenario 2.
@@ -205,16 +211,17 @@ class UserInterface {
      * @param dataset The dataset to use
      */
     void scenarioTwoMenu(Dataset &dataset);
+    
+    void scenario2_1Menu(Dataset &dataset);
+    void scenario2_2Menu(Dataset &dataset);
+    void scenario2_3Menu(Dataset &dataset);
+    void scenario2_4Menu(Dataset &dataset);
+    void scenario2_5Menu(Dataset &dataset);
 
     /**
      * @brief Runs all scenarios.
      */
     void allScenariosMenu();
-
-    /**
-     * @brief Shows the results of a scenario.
-     */
-    void resultsMenu();
 
     void visualizeDatasetMenu(Dataset &dataset);
 

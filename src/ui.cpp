@@ -129,15 +129,36 @@ void UserInterface::show(Dataset &dataset) {
     case Menu::SCENARIO_ONE:
         scenarioOneMenu(dataset);
         break;
+
+    case Menu::SCENARIO_1_1:
+        scenario1_1Menu(dataset);
+        break;
+    case Menu::SCENARIO_1_2:
+        scenario1_2Menu(dataset);
+        break;
+
     case Menu::SCENARIO_TWO:
         scenarioTwoMenu(dataset);
         break;
-    case Menu::ALL_SCENARIOS:
-        allScenariosMenu();
+
+    case Menu::SCENARIO_2_1:
+        scenario2_1Menu(dataset);
+        break;
+    case Menu::SCENARIO_2_2:
+        scenario2_2Menu(dataset);
+        break;
+    case Menu::SCENARIO_2_3:
+        scenario2_3Menu(dataset);
+        break;
+    case Menu::SCENARIO_2_4:
+        scenario2_4Menu(dataset);
+        break;
+    case Menu::SCENARIO_2_5:
+        scenario2_5Menu(dataset);
         break;
 
-    case Menu::RESULTS:
-        resultsMenu();
+    case Menu::ALL_SCENARIOS:
+        allScenariosMenu();
         break;
 
     case Menu::EXIT:
@@ -256,53 +277,189 @@ void UserInterface::generateDatasetMenu(Dataset &dataset) {
 }
 
 void UserInterface::scenarioOneMenu(Dataset &dataset) {
-    auto selection = optionsMenu<std::optional<Scenario1Strategy>>({
-        {"Go back", {}},
-        {"Maximize group size", Scenario1Strategy::FIRST},
-        {"Minimize connections", Scenario1Strategy::SECOND},
+    auto menu = optionsMenu<Menu>({
+        {"Go back", Menu::CHOOSE_SCENARIO},
+        {"Maximize group size", Menu::SCENARIO_1_1},
+        {"Minimize connections", Menu::SCENARIO_1_2},
     });
+    currentMenu = menu.value_or(currentMenu);
+}
 
-    if (!selection.has_value()) // Error while getting option
-        return;
+void UserInterface::scenario1_1Menu(Dataset &dataset) {
+    scenario1_1(dataset);
 
-    if (!selection.value().has_value()) { // User wants to go back
-        currentMenu = Menu::CHOOSE_SCENARIO;
-        return;
-    }
+    auto &result = dataset.getScenario1Result();
 
-    result = scenario1(dataset, selection.value().value());
+    std::cout << "Max capacity: " << result.capacity1_1
+              << "\nNumber of connections: "
+              << result.connections1_1
+              << "\nRuntime: "
+              << result.runtime1_1.count() << "μs\n\n";
 
-    currentMenu = Menu::RESULTS;
+    getStringInput("Press enter to continue ");
+
+    currentMenu = Menu::MAIN;
+}
+
+void UserInterface::scenario1_2Menu(Dataset &dataset) {
+    scenario1_2(dataset);
+
+    auto &result = dataset.getScenario1Result();
+
+    std::cout << "Max capacity: " << result.capacity1_2
+              << "\nNumber of connections: "
+              << result.connections1_2
+              << "\nRuntime: "
+              << result.runtime1_2.count() << "μs\n\n";
+
+    getStringInput("Press enter to continue ");
+    
+    currentMenu = Menu::MAIN;
 }
 
 void UserInterface::scenarioTwoMenu(Dataset &dataset) {
-    Options<std::optional<Scenario2Strategy>> options = 
-        dataset.getPath().getNodes().empty() ? 
-        Options<std::optional<Scenario2Strategy>>{
-            {"Go back", {}},
-            {"Find path from group size", Scenario2Strategy::FIRST},
-            {"Find maximum group size and its path", Scenario2Strategy::THIRD},
-        } : Options<std::optional<Scenario2Strategy>>{
-            {"Go back", {}},
-            {"Find path from group size", Scenario2Strategy::FIRST},
-            {"Increase group size", Scenario2Strategy::SECOND},
-            {"Find maximum group size and its path", Scenario2Strategy::THIRD},
-            {"Find earliest end time", Scenario2Strategy::FOURTH},
-            {"Find maximum wait time", Scenario2Strategy::FIFTH},
-        };
+    auto &result = dataset.getScenario2Result();
 
-    auto selection = optionsMenu(options);
-
-    if (!selection.has_value()) // Error while getting option
-        return;
-
-    if (!selection.value().has_value()) { // User wants to go back
-        currentMenu = Menu::CHOOSE_SCENARIO;
-        return;
+    Options<Menu> options = {{"Go back", Menu::CHOOSE_SCENARIO}};
+    options.emplace_back("Find path from group size", Menu::SCENARIO_2_1);
+    if (result.groupSize2_1 != -1)
+        options.emplace_back("Increase group size", Menu::SCENARIO_2_2);
+    options.emplace_back("Find maximum group size and its path",
+                         Menu::SCENARIO_2_3);
+    if (result.groupSize2_1 != -1 || result.maxFlow2_3 != -1) {
+        options.emplace_back("Find earliest end time", Menu::SCENARIO_2_4);
+        options.emplace_back("Find maximum wait time", Menu::SCENARIO_2_5);
     }
 
-    result = scenario2(dataset, selection.value().value());
-    currentMenu = Menu::RESULTS;
+    auto menu = optionsMenu<Menu>(options);
+    currentMenu = menu.value_or(currentMenu);
+}
+
+void UserInterface::scenario2_1Menu(Dataset &dataset) {
+    int groupSize = getUnsignedInput("Group size: ");
+
+    scenario2_1(dataset, groupSize);
+
+    auto &result = dataset.getScenario2Result();
+
+    std::cout << "Runtime: " << result.runtime2_1.count() << "μs\n\n";
+
+    getStringInput("Press enter to continue ");
+
+    currentMenu = Menu::MAIN;
+}
+
+void UserInterface::scenario2_2Menu(Dataset &dataset) {
+    auto &result = dataset.getScenario2Result();
+
+    std::stringstream prompt{};
+    prompt << "Group size increase (from " << result.groupSize2_1 << "): ";
+    int increase = getUnsignedInput(prompt.str());
+
+    scenario2_2(dataset, increase);
+
+    if (result.requiresNewPath2_2) {
+        std::cout << "That increase requires a new path\n";
+    } else {
+        std::cout << "That increase does not require a new path\n";
+    }
+
+    std::cout << "Runtime: " << result.runtime2_2.count() << "μs\n\n";
+
+    getStringInput("Press enter to continue ");
+
+    currentMenu = Menu::MAIN;
+}
+
+void UserInterface::scenario2_3Menu(Dataset &dataset) {
+    scenario2_3(dataset);
+
+    auto &result = dataset.getScenario2Result();
+
+    std::cout << "Maximum flow: " << result.maxFlow2_3
+              << "\nRuntime: " << result.runtime2_3.count() << "μs\n\n";
+
+    getStringInput("Press enter to continue ");
+
+    currentMenu = Menu::MAIN;
+}
+
+void UserInterface::scenario2_4Menu(Dataset &dataset) {
+    auto &result = dataset.getScenario2Result();
+
+    Options<std::optional<Graph>> options{{"Go back", {}}};
+
+    if (result.groupSize2_1 != -1)
+        options.emplace_back("Use path from 2.1", result.path2_1);
+    if (result.increase2_2 != -1)
+        options.emplace_back("Use path from 2.2", result.path2_2);
+    if (result.maxFlow2_3 != -1)
+        options.emplace_back("Use path from 2.3", result.path2_3);
+
+    Graph graph{};
+
+    if (options.size() == 2) {
+        graph = options.at(1).second.value();
+    } else {
+        auto selection = optionsMenu(options);
+
+        if (!selection.has_value()) {
+            return;
+        } else if (!selection.value().has_value()) {
+            currentMenu = Menu::MAIN;
+            return;
+        } else {
+            graph = selection.value().value();
+        }
+    }
+
+    scenario2_4(dataset, graph);
+
+    std::cout << "Earliest end time: " << result.earliestFinish2_4
+              << "\nRuntime: " << result.runtime2_4.count() << "μs\n\n";
+
+    getStringInput("Press enter to continue ");
+
+    currentMenu = Menu::MAIN;
+}
+
+void UserInterface::scenario2_5Menu(Dataset &dataset) {
+    auto &result = dataset.getScenario2Result();
+
+    Options<std::optional<Graph>> options{{"Go back", {}}};
+
+    if (result.groupSize2_1 != -1)
+        options.emplace_back("Use path from 2.1", result.path2_1);
+    if (result.increase2_2 != -1)
+        options.emplace_back("Use path from 2.2", result.path2_2);
+    if (result.maxFlow2_3 != -1)
+        options.emplace_back("Use path from 2.3", result.path2_3);
+
+    Graph graph{};
+
+    if (options.size() == 2) {
+        graph = options.at(1).second.value();
+    } else {
+        auto selection = optionsMenu(options);
+
+        if (!selection.has_value()) {
+            return;
+        } else if (!selection.value().has_value()) {
+            currentMenu = Menu::MAIN;
+            return;
+        } else {
+            graph = selection.value().value();
+        }
+    }
+
+    scenario2_5(dataset, graph);
+
+    std::cout << "Maximum wait time: " << result.maxWaitTime2_5
+              << "\nRuntime: " << result.runtime2_5.count() << "μs\n\n";
+
+    getStringInput("Press enter to continue ");
+
+    currentMenu = Menu::MAIN;
 }
 
 void UserInterface::allScenariosMenu() {
@@ -312,59 +469,10 @@ void UserInterface::allScenariosMenu() {
     currentMenu = Menu::MAIN;
 }
 
-void UserInterface::resultsMenu() {
-    if (result.flow != -1)
-        std::cout << "Flow: " << result.flow << "\n";
-    if (result.maxCapacity != -1)
-        std::cout << "Max capacity: " << result.maxCapacity << "\n";
-    if (result.groupSize != -1)
-        std::cout << "Group size: " << result.groupSize << "\n";
-    if (result.minDuration != -1)
-        std::cout << "Minimum duration: " << result.minDuration << "\n";
-    if (result.maxWaitTime != -1)
-        std::cout << "Maximum wait time: " << result.maxWaitTime << "\n";
-    if (!result.maxWaitNodes.empty()) {
-        std::cout << "\tat nodes "; 
-        
-        for (auto it = result.maxWaitNodes.begin(); it != result.maxWaitNodes.end() - 2; ++it)
-            std::cout << *it << ", ";
-
-        std::cout << *(result.maxWaitNodes.end() - 2) << " and " << *(result.maxWaitNodes.end() - 1);
-        std::cout << "\n";
-    }
-
-
-    std::vector<std::list<int>> paths = result.paths;
-
-    if (paths.size() == 0) {
-        std::cout << "There isn't an available path for a group of size "
-                  << result.groupSize << std::endl;
-    }
-
-    for (unsigned i = 0; i < paths.size(); ++i) {
-        std::list<int> path = paths.at(i);
-
-        if (paths.size() > 1)
-            std::cout << "Path number " << i + 1 << std::endl;
-
-        for (unsigned j = 0; j < paths.at(i).size(); ++j) {
-            if (j < paths.at(i).size() - 1)
-                std::cout << path.front() << " > ";
-            else
-                std::cout << path.front();
-            path.pop_front();
-        }
-        std::cout << std::endl << std::endl;
-    }
-
-    getStringInput("Press enter to continue ");
-    currentMenu = Menu::MAIN;
-}
-
 void UserInterface::visualizeDatasetMenu(Dataset &dataset) {
     std::ofstream outfile{OUTPUT_PATH + "dataset.dot"};
 
-    outfile << dataset.getGraph().toDotFile();
+    outfile << dataset.toDotFile();
 
     outfile.close();
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.16)
 project(da_proj2
         VERSION 1.0
         LANGUAGES CXX)
@@ -13,7 +13,6 @@ add_executable(da_proj2
                src/utils.cpp
                src/dataset.cpp
                src/scenarios.cpp
-               src/subscenarios.cpp
                src/graph.cpp)
 
 add_executable(da_proj2_no_ansi
@@ -22,7 +21,6 @@ add_executable(da_proj2_no_ansi
                 src/utils.cpp
                 src/dataset.cpp
                 src/scenarios.cpp
-                src/subscenarios.cpp
                 src/graph.cpp)
 target_compile_definitions(da_proj2_no_ansi PUBLIC NO_ANSI)
 

@@ -18,63 +18,135 @@ void Graph::addEdge(int src, int dest, int capacity, int duration) {
     addEdge(nodes[src], nodes[dest], capacity, duration);
 }
 
-std::pair<int, std::list<int>> Graph::BFS(int s, int t) {
-
+void Graph::bfs(int s, int t) {
     this->resetVisits();
 
-    std::list<int> path_list;
-    std::queue<std::pair<int ,int>> q; // queue of unvisited nodes with distance to s
-    
+    // queue of unvisited nodes with distance to s
+    std::queue<std::pair<int, int>> q;
+
     q.push({s, 0});
     nodes[s].visited = true;
     nodes[s].parent = s;
     int nStops = -1;
 
     while (!q.empty()) { // while there are still unvisited nodes
-        int currentNode = q.front().first;
-        int currentNodeDistToSrc = q.front().second; q.pop();
+        auto [currentNode, dist] = q.front();
+        q.pop();
 
-        auto& node = nodes[currentNode];
+        auto &node = nodes[currentNode];
 
-        bool toBreak = false;
+        for (const auto &e : node.adj) {
 
-        for (const auto& e : node.adj) {
+            int dest = e.dest;
 
-            int edgeDest = e.dest;
+            if (!nodes[dest].visited) {
+                q.push({dest, dist + 1});
+                nodes[dest].visited = true;
+                nodes[dest].parent = currentNode;
 
-            if (!nodes[edgeDest].visited) {
-                q.push({edgeDest, currentNodeDistToSrc + 1});
-                nodes[edgeDest].visited = true;
-                nodes[edgeDest].parent = currentNode;
-
-                if (edgeDest == t) {
-                    toBreak = true;
-                    break;
-                }
+                if (dest == t)
+                    goto bfs_exitwhile;
             }
         }
+    }
+bfs_exitwhile: return;
+}
 
-        if (toBreak) break;
+int Graph::edmondsKarpBFS(int s, int t,
+                          std::vector<std::vector<int>> &residualGraph) {
+    resetVisits();
+
+    nodes.at(s).parent = s;
+    nodes.at(s).visited = true;
+    std::queue<std::pair<int, int>> q;
+    q.push({s, INT_MAX});
+
+    while (!q.empty()) {
+        auto [cur, flow] = q.front();
+        q.pop();
+
+        for (Edge next : nodes.at(cur).adj) {
+            int dest = next.dest;
+
+            if (!nodes.at(dest).visited && residualGraph.at(cur).at(dest) > 0) {
+                nodes.at(dest).parent = cur;
+                int new_flow = std::min(flow, residualGraph.at(cur).at(dest));
+
+                if (dest == t)
+                    return new_flow;
+
+                q.push({dest, new_flow});
+            }
+        }
     }
 
-    int cur = t;
-    int minCap = INT_MAX;
+    return -1;
+}
 
-    while (cur != s) {
-        int prev = nodes[cur].parent;
-        path_list.emplace_front(cur);
+std::pair<int, Graph> Graph::edmondsKarp(int start, int end, int groupSize) {
+    Graph graph{};
 
-        auto prevNodeEdges = this->getNode(prev).adj;
+    int flow = 0, new_flow = 0;
+    std::vector<std::list<int>> paths;
+    std::vector<std::vector<int>> residualGraph(
+        nodes.size() + 1, std::vector<int>(nodes.size() + 1));
 
-        int edgeCap = std::find_if(prevNodeEdges.begin(), prevNodeEdges.end(), [&cur](const Edge& e) -> bool { return e.dest == cur; })->capacity;
+    for (auto &[src, node] : nodes)
+        for (auto &e : node.adj)
+            residualGraph.at(src).at(e.dest) = e.capacity;
 
-        if (edgeCap < minCap) minCap = edgeCap;
+    while (flow < groupSize) {
+        new_flow = 
+        edmondsKarpBFS(start, end, residualGraph);
 
-        cur = prev;
+        if (new_flow == -1)
+            break;
+
+        // we found a new valid augment path, update path graph
+
+        int currentNode = nodes.size();
+        do {
+            int parentNode = nodes.at(currentNode).parent;
+
+            auto startNode = nodes.at(parentNode);
+            auto destNode = nodes.at(currentNode);
+
+            auto startNodeEdges = startNode.adj;
+
+            auto edge =
+                std::find_if(startNodeEdges.begin(), startNodeEdges.end(),
+                             [&destNode](const Edge &edge) -> bool {
+                                 return edge.dest == destNode.label;
+                             });
+
+            if (edge == startNodeEdges.end())
+                continue;
+
+            if (!graph.hasNode(startNode.label))
+                graph.addNode(startNode.label);
+
+            if (!graph.hasNode(destNode.label))
+                graph.addNode(destNode.label);
+
+            graph.addEdge(startNode.label, destNode.label, edge->capacity,
+                               edge->duration);
+
+            currentNode = parentNode;
+        } while (currentNode != start);
+
+        // path = parent;
+        flow += new_flow;
+        int cur = end;
+
+        while (cur != start) {
+            int prev = nodes.at(cur).parent;
+            residualGraph.at(prev).at(cur) -= new_flow;
+            residualGraph.at(cur).at(prev) += new_flow;
+            cur = prev;
+        }
     }
-    path_list.emplace_front(s);
 
-    return {minCap, path_list};
+    return {flow, graph};
 }
 
 void Graph::resetVisits() {
@@ -90,18 +162,4 @@ void Graph::addNode(int i) {
 
 void Graph::addNode(int i, const Node& node) {
     this->nodes.insert({i, node});
-}
-
-std::string Graph::toDotFile() {
-    std::stringstream out{};
-
-    out << "digraph {\noverlap=scale\nsplines=true\nnode [shape=circle]\n";
-
-    for (auto p : nodes)
-        for (auto e : p.second.adj)
-            out << p.first << " -> " << e.dest << '\n';
-
-    out << "}\n";
-
-    return out.str();
 }

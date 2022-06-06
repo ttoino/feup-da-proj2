@@ -27,7 +27,6 @@ void Graph::bfs(int s, int t) {
     q.push({s, 0});
     nodes[s].visited = true;
     nodes[s].parent = s;
-    int nStops = -1;
 
     while (!q.empty()) { // while there are still unvisited nodes
         auto [currentNode, dist] = q.front();
@@ -52,18 +51,22 @@ bfs_exitwhile: return;
 int Graph::edmondsKarpBFS(int s, int t) {
     resetVisits();
 
+    std::queue<std::pair<int, int>> q;
+
+    q.push({s, INT_MAX});
     nodes.at(s).parent = s;
     nodes.at(s).visited = true;
-    std::queue<std::pair<int, int>> q;
-    q.push({s, INT_MAX});
 
     while (!q.empty()) {
         auto [cur, flow] = q.front();
         q.pop();
 
-        for (auto &[dest, next] : nodes.at(cur).adj) {
+        auto &node = nodes.at(cur);
+
+        for (const auto &[dest, next] : node.adj) {
             if (!nodes.at(dest).visited && residualGraph.at(cur).at(dest) > 0) {
                 nodes.at(dest).parent = cur;
+                nodes.at(dest).visited = true;
                 int new_flow = std::min(flow, residualGraph.at(cur).at(dest));
 
                 if (dest == t)

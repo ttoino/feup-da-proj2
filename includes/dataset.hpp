@@ -58,12 +58,13 @@ enum class Visualization {
  */
 class Dataset {
 
+    int n = -1;
     Graph graph;
 
     Scenario1Result scenario1Result;
     Scenario2Result scenario2Result;
 
-    Dataset(const Graph &graph);
+    Dataset(const int n, const Graph &graph);
     Dataset(){};
 
 public:
@@ -73,6 +74,8 @@ public:
      * @return Graph& the Graph object associated with this dataset
      */
     Graph &getGraph() { return graph; }
+    
+    int getN() { return n; }
 
     /**
      * @brief Get the results for running the first scenario.

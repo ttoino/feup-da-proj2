@@ -23,19 +23,21 @@ void runAllScenarios(int groupSize, int increase) {
         scenario1_1(dataset);
         scenario1_2(dataset);
         scenario2_1(dataset, groupSize);
-        scenario2_2(dataset, increase);
+        if (r2.groupSize2_1 != -1)
+            scenario2_2(dataset, increase);
         scenario2_3(dataset);
         scenario2_4(dataset, r2.path2_3);
         scenario2_5(dataset, r2.path2_3);
 
         out << name << ',' << r1.capacity1_1 << ',' << r1.connections1_1 << ','
-            << r1.runtime1_1 << ',' << r1.capacity1_2 << ','
-            << r1.connections1_2 << ',' << r1.runtime1_2 << ','
-            << r2.groupSize2_1 << ',' << r2.runtime2_1 << ',' << r2.increase2_2
-            << ',' << r2.requiresNewPath2_2 << ',' << r2.runtime2_2 << ','
-            << r2.maxFlow2_3 << ',' << r2.runtime2_3 << ','
-            << r2.earliestFinish2_4 << ',' << r2.runtime2_4 << ','
-            << r2.maxWaitTime2_5 << ',' << r2.runtime2_5;
+            << r1.runtime1_1.count() << ',' << r1.capacity1_2 << ','
+            << r1.connections1_2 << ',' << r1.runtime1_2.count() << ','
+            << r2.groupSize2_1 << ',' << r2.runtime2_1.count() << ','
+            << r2.increase2_2 << ',' << r2.requiresNewPath2_2 << ','
+            << r2.runtime2_2.count() << ',' << r2.maxFlow2_3 << ','
+            << r2.runtime2_3.count() << ',' << r2.earliestFinish2_4 << ','
+            << r2.runtime2_4.count() << ',' << r2.maxWaitTime2_5 << ','
+            << r2.runtime2_5.count() << '\n';
     }
 }
 
@@ -130,7 +132,7 @@ void scenario2_1(Dataset &dataset, int groupSize) {
     auto tstart = std::chrono::high_resolution_clock::now();
 
     auto [flow, graph] = dataset.getGraph().edmondsKarp(
-        1, dataset.getGraph().getNodes().size(), groupSize);
+        1, dataset.getN(), groupSize);
 
     auto &result = dataset.getScenario2Result();
 
@@ -155,16 +157,20 @@ void scenario2_2(Dataset &dataset, int increase) {
     result.increase2_2 = increase;
     int newGroupSize = result.groupSize2_1 + increase;
 
-    auto [flow, graph] =
-        result.path2_1.edmondsKarp(1, dataset.getGraph().getNodes().size());
+    auto [flow, graph] = result.path2_1.edmondsKarp(1, dataset.getN());
 
     result.requiresNewPath2_2 = flow < newGroupSize;
     result.path2_2 = graph;
 
     if (result.requiresNewPath2_2) {
-        auto [flow, graph] = dataset.getGraph().edmondsKarp(
-            1, dataset.getGraph().getNodes().size());
+        auto [flow, graph] = dataset.getGraph().edmondsKarp(1, dataset.getN());
         result.path2_2 = graph;
+
+        if (flow < newGroupSize) {
+            result.path2_2 = {};
+            result.increase2_2 = -1;
+            result.requiresNewPath2_2 = false;
+        }
     }
 
     auto tend = std::chrono::high_resolution_clock::now();
@@ -177,7 +183,7 @@ void scenario2_3(Dataset &dataset) {
     auto tstart = std::chrono::high_resolution_clock::now();
 
     auto [flow, graph] =
-        dataset.getGraph().edmondsKarp(1, dataset.getGraph().getNodes().size());
+        dataset.getGraph().edmondsKarp(1, dataset.getN());
 
     auto &result = dataset.getScenario2Result();
     result.path2_3 = graph;

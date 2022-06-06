@@ -347,6 +347,10 @@ void UserInterface::scenario2_1Menu(Dataset &dataset) {
 
     auto &result = dataset.getScenario2Result();
 
+    if (result.groupSize2_1 == -1) {
+        std::cout << "No path found for that group size!\n";
+    }
+
     std::cout << "Runtime: " << result.runtime2_1.count() << "μs\n\n";
 
     getStringInput("Press enter to continue ");
@@ -363,7 +367,9 @@ void UserInterface::scenario2_2Menu(Dataset &dataset) {
 
     scenario2_2(dataset, increase);
 
-    if (result.requiresNewPath2_2) {
+    if (result.increase2_2 == -1) {
+        std::cout << "No path found for that group size increase!\n";
+    } else if (result.requiresNewPath2_2) {
         std::cout << "That increase requires a new path\n";
     } else {
         std::cout << "That increase does not require a new path\n";

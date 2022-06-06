@@ -84,7 +84,7 @@ int Graph::edmondsKarpBFS(int s, int t) {
 }
 
 std::pair<int, Graph> Graph::edmondsKarp(int start, int end, int groupSize) {
-    Graph graph{};
+    Graph graph{nodes.size()};
 
     int flow = 0, new_flow = 0;
 
@@ -104,12 +104,6 @@ std::pair<int, Graph> Graph::edmondsKarp(int start, int end, int groupSize) {
         do {
             int parentNode = nodes.at(currentNode).parent;
             auto &edge = nodes.at(parentNode).adj.at(currentNode);
-
-            if (!graph.hasNode(currentNode))
-                graph.addNode(currentNode);
-
-            if (!graph.hasNode(parentNode))
-                graph.addNode(parentNode);
 
             graph.addEdge(parentNode, currentNode, edge.capacity,
                           edge.duration);

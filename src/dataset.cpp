@@ -10,7 +10,7 @@
 #include "../includes/dataset.hpp"
 #include "../includes/utils.hpp"
 
-Dataset::Dataset(const Graph &graph) : graph(graph) {}
+Dataset::Dataset(const int n, const Graph &graph) : n(n), graph(graph) {}
 
 Dataset Dataset::load(const std::string &path) {
     if (path == "output.csv")
@@ -46,7 +46,7 @@ Dataset Dataset::load(const std::string &path) {
         result.addEdge(src, dest, capacity, duration);
     }
 
-    Dataset dataset{result};
+    Dataset dataset{n, result};
     return dataset;
 }
 
@@ -86,7 +86,7 @@ Dataset Dataset::generate(const std::string &name,
         out << e.first << ' ' << e.second << ' ' << capacity << ' ' << duration << '\n';
     }
 
-    return {graph};
+    return {params.numberOfNodes, graph};
 }
 
 std::vector<std::string> Dataset::getAvailableDatasets() {

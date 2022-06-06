@@ -24,6 +24,7 @@ enum class Menu {
     /** @brief Allows the user to generate a new dataset. */
     GENERATE_DATASET,
 
+    RENDER_VISUALIZATIONS,
     VISUALIZE_DATASET,
 
     /** @brief Runs scenario 1. */
@@ -68,6 +69,8 @@ class UserInterface {
      * @brief The error message to show.
      */
     std::string errorMessage{};
+
+    std::unordered_map<Visualization, std::string> visualizations{};
 
     /**
      * @brief Helper method to show a menu with options.
@@ -223,11 +226,7 @@ class UserInterface {
      */
     void allScenariosMenu();
 
-    /**
-     * @brief Creates a graph representation of the given dataset.
-     * 
-     * @param dataset the dataset whose graph is to be represented visually
-     */
+    void renderVisualizationsMenu(Dataset &dataset);
     void visualizeDatasetMenu(Dataset &dataset);
 
 public:

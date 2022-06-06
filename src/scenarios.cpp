@@ -10,26 +10,32 @@
 #include "../includes/constants.hpp"
 #include "../includes/scenarios.hpp"
 
-void runAllScenarios() {
+void runAllScenarios(int groupSize, int increase) {
     std::ofstream out{OUTPUT_PATH + OUTPUT_FILE};
     out << OUTPUT_HEADER;
 
     for (const auto &name : Dataset::getAvailableDatasets()) {
         Dataset dataset = Dataset::load(name);
 
-        // FOR_ENUM(Scenario1Strategy, strat) {
-        //     auto result = scenario1(dataset, strat);
+        auto &r1 = dataset.getScenario1Result();
+        auto &r2 = dataset.getScenario2Result();
 
-        //     out << name << ',' << 1 << ',' << (int)strat << ','
-        //         << result.toCSV() << '\n';
-        // }
+        scenario1_1(dataset);
+        scenario1_2(dataset);
+        scenario2_1(dataset, groupSize);
+        scenario2_2(dataset, increase);
+        scenario2_3(dataset);
+        scenario2_4(dataset, r2.path2_3);
+        scenario2_5(dataset, r2.path2_3);
 
-        // FOR_ENUM(Scenario2Strategy, strat) {
-        //     auto result = scenario2(dataset, strat);
-
-        //     out << name << ',' << 2 << ',' << (int)strat << ','
-        //         << result.toCSV() << '\n';
-        // }
+        out << name << ',' << r1.capacity1_1 << ',' << r1.connections1_1 << ','
+            << r1.runtime1_1 << ',' << r1.capacity1_2 << ','
+            << r1.connections1_2 << ',' << r1.runtime1_2 << ','
+            << r2.groupSize2_1 << ',' << r2.runtime2_1 << ',' << r2.increase2_2
+            << ',' << r2.requiresNewPath2_2 << ',' << r2.runtime2_2 << ','
+            << r2.maxFlow2_3 << ',' << r2.runtime2_3 << ','
+            << r2.earliestFinish2_4 << ',' << r2.runtime2_4 << ','
+            << r2.maxWaitTime2_5 << ',' << r2.runtime2_5;
     }
 }
 
@@ -127,8 +133,14 @@ void scenario2_1(Dataset &dataset, int groupSize) {
         1, dataset.getGraph().getNodes().size(), groupSize);
 
     auto &result = dataset.getScenario2Result();
-    result.path2_1 = graph;
-    result.groupSize2_1 = groupSize;
+
+    if (flow < groupSize) {
+        result.path2_1 = {};
+        result.groupSize2_1 = -1;
+    } else {
+        result.path2_1 = graph;
+        result.groupSize2_1 = groupSize;
+    }
 
     auto tend = std::chrono::high_resolution_clock::now();
 

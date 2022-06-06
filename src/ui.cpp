@@ -123,6 +123,10 @@ void UserInterface::show(Dataset &dataset) {
     case Menu::GENERATE_DATASET:
         generateDatasetMenu(dataset);
         break;
+
+    case Menu::RENDER_VISUALIZATIONS:
+        renderVisualizationsMenu(dataset);
+        break;
     case Menu::VISUALIZE_DATASET:
         visualizeDatasetMenu(dataset);
         break;
@@ -180,7 +184,7 @@ void UserInterface::mainMenu() {
         {"Choose dataset", Menu::CHOOSE_DATASET},
         {"Choose scenario", Menu::CHOOSE_SCENARIO},
         {"Generate dataset", Menu::GENERATE_DATASET},
-        {"Visualize dataset (requires graphviz)", Menu::VISUALIZE_DATASET},
+        {"Visualize dataset (requires graphviz)", Menu::RENDER_VISUALIZATIONS},
     });
     currentMenu = menu.value_or(currentMenu);
 }
@@ -484,20 +488,61 @@ void UserInterface::allScenariosMenu() {
     currentMenu = Menu::MAIN;
 }
 
+void UserInterface::renderVisualizationsMenu(Dataset &dataset) {
+    std::cout << "Rendering visualizations, this may take a while...\n";
+
+    visualizations = dataset.render();
+
+    if (visualizations.empty()) {
+        std::cout << "\nCould't render visualizations, make sure graphviz is installed.\n";
+
+        getStringInput("\nPress enter to continue ");
+        currentMenu = Menu::MAIN;
+    } else {
+        currentMenu = Menu::VISUALIZE_DATASET;
+    }
+}
+
 void UserInterface::visualizeDatasetMenu(Dataset &dataset) {
-    std::ofstream outfile{OUTPUT_PATH + "dataset.dot"};
+    Options<std::optional<Visualization>> possibleOptions = {
+        {"Go back", {}},
+        {"Visualize graph", Visualization::DATASET},
+        {"Visualize max capacity path", Visualization::SCENARIO_1_1},
+        {"Visualize max capacity path only", Visualization::SCENARIO_1_1_ONLY},
+        {"Visualize min connections path", Visualization::SCENARIO_1_2},
+        {"Visualize min connections path only", Visualization::SCENARIO_1_2_ONLY},
+        {"Visualize both paths", Visualization::SCENARIO_1},
+        {"Visualize path for given group size", Visualization::SCENARIO_2_1},
+        {"Visualize path for given group size only", Visualization::SCENARIO_2_1_ONLY},
+        {"Visualize path for given group size increase", Visualization::SCENARIO_2_2},
+        {"Visualize path for given group size increase only", Visualization::SCENARIO_2_2_ONLY},
+        {"Visualize max flow path", Visualization::SCENARIO_2_3},
+        {"Visualize max flow path only", Visualization::SCENARIO_2_3_ONLY},
+        {"Visualize earliest finish", Visualization::SCENARIO_2_4},
+        {"Visualize earliest finish only", Visualization::SCENARIO_2_4_ONLY},
+        {"Visualize max wait time", Visualization::SCENARIO_2_5},
+        {"Visualize max wait time only", Visualization::SCENARIO_2_5_ONLY},
+    }, options{};
 
-    outfile << dataset.toDotFile();
+    std::copy_if(
+        possibleOptions.begin(), possibleOptions.end(),
+        std::back_inserter(options),
+        [&](const Options<std::optional<Visualization>>::value_type p) {
+            return !p.second.has_value() ||
+                   visualizations.count(p.second.value());
+        });
 
-    outfile.close();
+    auto selection = optionsMenu(options);
 
-    std::stringstream command{};
+    if (!selection.has_value())
+        return;
 
-    command << "sfdp -T svg " << OUTPUT_PATH << "dataset.dot > " << OUTPUT_PATH << "dataset.svg && xdg-open " << OUTPUT_PATH << "dataset.svg";
+    if (!selection.value().has_value()) {
+        currentMenu = Menu::MAIN;
+        return;
+    }
 
-    system(command.str().c_str());
+    auto file = visualizations.at(selection.value().value());
 
-    getStringInput("Press enter to continue ");
-
-    currentMenu = Menu::MAIN;
+    system(("xdg-open " + file).c_str());
 }

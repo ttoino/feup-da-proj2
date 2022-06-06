@@ -20,7 +20,18 @@ const std::string OUTPUT_FILE = "output.csv";
 /**
  * @brief The header to be printed at the start of the scenario results.
  */
-const std::string OUTPUT_HEADER = "dataset,scenario,heuristic,runtime,maxFlow,maxCapacity,path,minDuration\n";
+const std::string OUTPUT_HEADER = "dataset,"
+                                  "capacity1_1,connections1_1,runtime1_1,"
+                                  "capacity1_2,connections1_2,runtime1_2,"
+                                  "groupSize2_1,runtime2_1,"
+                                  "increase2_2,requiresNewPath2_2,runtime2_2,"
+                                  "maxFlow2_3,runtime2_3"
+                                  "earliestFinish2_4,runtime2_4,"
+                                  "maxWaitTime2_5,runtime2_5\n";
+const std::string DOT_HEADER = "digraph {\n"
+                               "overlap=scale\n"
+                               "splines=true\n"
+                               "node [shape=circle]\n";
 /**
  * @brief How many items to print in each page in UserInterface#paginatedMenu().
  */

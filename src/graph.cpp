@@ -2,6 +2,9 @@
 #include <list>
 #include <algorithm>
 #include <sstream>
+#include <fstream>
+#include <map>
+#include <unordered_map>
 
 #include "../includes/constants.hpp"
 #include "../includes/graph.hpp"
@@ -142,4 +145,32 @@ void Graph::addNode(int i) {
 
 void Graph::addNode(int i, const Node& node) {
     this->nodes.insert({i, node});
+}
+
+void Graph::toDotFile(const std::string &path, const std::vector<Graph> paths) {
+    static const std::unordered_map<int, std::string> colors{
+        {0, "black"}, {1, "red"}, {2, "blue"}, {3, "purple"}, {4, "green"}
+    };
+
+    std::ofstream out{path};
+
+    out << DOT_HEADER;
+
+    std::map<std::pair<int, int>, int> edges{};
+
+    for (auto &[src, node] : nodes)
+        for (auto &[dest, edge] : node.adj)
+            edges[{src, dest}] = 0;
+
+    for (int i = 0; i < paths.size(); ++i)
+        for (auto &[src, node] : paths.at(i).nodes)
+            for (auto &[dest, edge] : node.adj)
+                edges[{src, dest}] |= 1 << i;
+
+    for (auto &[p, color] : edges)
+        out << p.first << " -> " << p.second << " [color=" << colors.at(color)
+            << "]\n";
+
+    out << "}\n";
+    out.close();
 }

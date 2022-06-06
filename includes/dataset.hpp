@@ -31,9 +31,24 @@ struct DatasetGenerationParams {
     unsigned int maxEdgeDuration;
 };
 
-enum EdmondsKarpUsage {
-    DEFAULT,
-    CUSTOM,
+enum class Visualization {
+    DATASET,
+    SCENARIO_1,
+    SCENARIO_1_1,
+    SCENARIO_1_1_ONLY,
+    SCENARIO_1_2,
+    SCENARIO_1_2_ONLY,
+    SCENARIO_2,
+    SCENARIO_2_1,
+    SCENARIO_2_1_ONLY,
+    SCENARIO_2_2,
+    SCENARIO_2_2_ONLY,
+    SCENARIO_2_3,
+    SCENARIO_2_3_ONLY,
+    SCENARIO_2_4,
+    SCENARIO_2_4_ONLY,
+    SCENARIO_2_5,
+    SCENARIO_2_5_ONLY
 };
 
 /**
@@ -103,12 +118,7 @@ public:
      */
     static std::vector<std::string> getAvailableDatasets();
 
-    /**
-     * @brief Converts this dataset into a .dot file formatted string
-     * 
-     * @return std::string the .dot file formatted string representing this dataset
-     */
-    std::string toDotFile();
+    std::unordered_map<Visualization, std::string> render();
 };
 
 #endif

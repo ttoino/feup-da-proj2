@@ -102,32 +102,128 @@ std::vector<std::string> Dataset::getAvailableDatasets() {
     return result;
 }
 
-std::string Dataset::toDotFile() {
-    std::stringstream out{};
+std::unordered_map<Visualization, std::string> Dataset::render() {
+    std::unordered_map<Visualization, std::string> m{};
 
-    // out << "digraph {\n"
-    //        "overlap=scale\n"
-    //        "splines=true\n"
-    //        "node [shape=circle]\n";
+    // DATASET
+    graph.toDotFile(OUTPUT_PATH + "dataset.dot");
+    std::stringstream command{};
+    command << "sfdp -T svg " << OUTPUT_PATH << "dataset.dot > " << OUTPUT_PATH
+            << "dataset.svg";
+    int r = system(command.str().c_str());
+    if (!r)
+        m.insert({Visualization::DATASET, OUTPUT_PATH + "dataset.svg"});
 
-    // std::set<std::pair<int, int>> edges;
-    // for (auto p : path.getNodes())
-    //     for (auto e : p.second.adj)
-    //         out << '"' << p.first << "f\" -> \"" << e.dest
-    //             << "f\" [label=" << e.capacity << "]\n";
+    // 1.1
+    if (scenario1Result.capacity1_1 != -1) {
+        scenario1Result.path1_1.toDotFile(OUTPUT_PATH + "1.1only.dot");
+        command = {};
+        command << "sfdp -T svg " << OUTPUT_PATH << "1.1only.dot > "
+                << OUTPUT_PATH << "1.1only.svg";
+        r = system(command.str().c_str());
+        if (!r)
+            m.insert({Visualization::SCENARIO_1_1_ONLY,
+                      OUTPUT_PATH + "1.1only.svg"});
 
-    // for (auto p : path.getNodes())
-    //     for (auto e : p.second.adj) {
-    //         edges.emplace(p.first, e.dest);
-    //         out << p.first << " -> " << e.dest << " [color=red]\n";
-    //     }
+        graph.toDotFile(OUTPUT_PATH + "1.1.dot", {scenario1Result.path1_1});
+        command = {};
+        command << "sfdp -T svg " << OUTPUT_PATH << "1.1.dot > " << OUTPUT_PATH
+                << "1.1.svg";
+        r = system(command.str().c_str());
+        if (!r)
+            m.insert({Visualization::SCENARIO_1_1, OUTPUT_PATH + "1.1.svg"});
+    }
 
-    // for (auto p : network.getNodes())
-    //     for (auto e : p.second.adj)
-    //         if (!edges.contains({p.first, e.dest}))
-    //             out << p.first << " -> " << e.dest << '\n';
+    // 1.2
+    if (scenario1Result.capacity1_2 != -1) {
+        scenario1Result.path1_2.toDotFile(OUTPUT_PATH + "1.2only.dot");
+        command = {};
+        command << "sfdp -T svg " << OUTPUT_PATH << "1.2only.dot > "
+                << OUTPUT_PATH << "1.2only.svg";
+        r = system(command.str().c_str());
+        if (!r)
+            m.insert({Visualization::SCENARIO_1_2_ONLY,
+                      OUTPUT_PATH + "1.2only.svg"});
 
-    // out << "}\n";
+        graph.toDotFile(OUTPUT_PATH + "1.2.dot", {scenario1Result.path1_2});
+        command = {};
+        command << "sfdp -T svg " << OUTPUT_PATH << "1.2.dot > " << OUTPUT_PATH
+                << "1.2.svg";
+        r = system(command.str().c_str());
+        if (!r)
+            m.insert({Visualization::SCENARIO_1_2, OUTPUT_PATH + "1.2.svg"});
+    }
 
-    return out.str();
+    // 1.1 and 1.2
+    if (scenario1Result.capacity1_1 != -1 && scenario1Result.capacity1_2 != -1) {
+        graph.toDotFile(OUTPUT_PATH + "1.1.dot", {scenario1Result.path1_1, scenario1Result.path1_2});
+        command = {};
+        command << "sfdp -T svg " << OUTPUT_PATH << "1.1.dot > " << OUTPUT_PATH
+                << "1.1.svg";
+        r = system(command.str().c_str());
+        if (!r)
+            m.insert({Visualization::SCENARIO_1, OUTPUT_PATH + "1.1.svg"});
+    }
+
+    // 2.1
+    if (scenario2Result.groupSize2_1 != -1) {
+        scenario2Result.path2_1.toDotFile(OUTPUT_PATH + "2.1only.dot");
+        command = {};
+        command << "sfdp -T svg " << OUTPUT_PATH << "2.1only.dot > "
+                << OUTPUT_PATH << "2.1only.svg";
+        r = system(command.str().c_str());
+        if (!r)
+            m.insert({Visualization::SCENARIO_2_1_ONLY,
+                      OUTPUT_PATH + "2.1only.svg"});
+
+        graph.toDotFile(OUTPUT_PATH + "2.1.dot", {scenario2Result.path2_1});
+        command = {};
+        command << "sfdp -T svg " << OUTPUT_PATH << "2.1.dot > " << OUTPUT_PATH
+                << "2.1.svg";
+        r = system(command.str().c_str());
+        if (!r)
+            m.insert({Visualization::SCENARIO_2_1, OUTPUT_PATH + "2.1.svg"});
+    }
+
+    // 2.2
+    if (scenario2Result.increase2_2 != -1) {
+        scenario2Result.path2_2.toDotFile(OUTPUT_PATH + "2.2only.dot");
+        command = {};
+        command << "sfdp -T svg " << OUTPUT_PATH << "2.2only.dot > "
+                << OUTPUT_PATH << "2.2only.svg";
+        r = system(command.str().c_str());
+        if (!r)
+            m.insert({Visualization::SCENARIO_2_2_ONLY,
+                      OUTPUT_PATH + "2.2only.svg"});
+
+        graph.toDotFile(OUTPUT_PATH + "2.2.dot", {scenario2Result.path2_2});
+        command = {};
+        command << "sfdp -T svg " << OUTPUT_PATH << "2.2.dot > " << OUTPUT_PATH
+                << "2.2.svg";
+        r = system(command.str().c_str());
+        if (!r)
+            m.insert({Visualization::SCENARIO_2_2, OUTPUT_PATH + "2.2.svg"});
+    }
+
+    // 2.3
+    if (scenario2Result.maxFlow2_3 != -1) {
+        scenario2Result.path2_3.toDotFile(OUTPUT_PATH + "2.3only.dot");
+        command = {};
+        command << "sfdp -T svg " << OUTPUT_PATH << "2.3only.dot > "
+                << OUTPUT_PATH << "2.3only.svg";
+        r = system(command.str().c_str());
+        if (!r)
+            m.insert({Visualization::SCENARIO_2_3_ONLY,
+                      OUTPUT_PATH + "2.3only.svg"});
+
+        graph.toDotFile(OUTPUT_PATH + "2.3.dot", {scenario2Result.path2_3});
+        command = {};
+        command << "sfdp -T svg " << OUTPUT_PATH << "2.3.dot > " << OUTPUT_PATH
+                << "2.3.svg";
+        r = system(command.str().c_str());
+        if (!r)
+            m.insert({Visualization::SCENARIO_2_3, OUTPUT_PATH + "2.3.svg"});
+    }
+
+    return m;
 }

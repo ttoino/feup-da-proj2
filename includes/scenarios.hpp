@@ -53,7 +53,7 @@ struct Scenario2Result {
  * @brief Runs all scenarios, using all the available datasets.
  * 
  */
-void runAllScenarios();
+void runAllScenarios(int groupSize, int increase);
 
 #include "dataset.hpp"
 

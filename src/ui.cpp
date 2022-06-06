@@ -482,7 +482,10 @@ void UserInterface::scenario2_5Menu(Dataset &dataset) {
 }
 
 void UserInterface::allScenariosMenu() {
-    runAllScenarios();
+    int groupSize = getUnsignedInput("Group size: ");
+    int increase = getUnsignedInput("Group size increase: ");
+
+    runAllScenarios(groupSize, increase);
 
     getStringInput("Press enter to continue ");
     currentMenu = Menu::MAIN;
@@ -504,25 +507,30 @@ void UserInterface::renderVisualizationsMenu(Dataset &dataset) {
 }
 
 void UserInterface::visualizeDatasetMenu(Dataset &dataset) {
-    Options<std::optional<Visualization>> possibleOptions = {
+    Options<std::optional<Visualization>> possibleOptions{
         {"Go back", {}},
         {"Visualize graph", Visualization::DATASET},
         {"Visualize max capacity path", Visualization::SCENARIO_1_1},
         {"Visualize max capacity path only", Visualization::SCENARIO_1_1_ONLY},
         {"Visualize min connections path", Visualization::SCENARIO_1_2},
-        {"Visualize min connections path only", Visualization::SCENARIO_1_2_ONLY},
+        {"Visualize min connections path only",
+         Visualization::SCENARIO_1_2_ONLY},
         {"Visualize both paths", Visualization::SCENARIO_1},
         {"Visualize path for given group size", Visualization::SCENARIO_2_1},
-        {"Visualize path for given group size only", Visualization::SCENARIO_2_1_ONLY},
-        {"Visualize path for given group size increase", Visualization::SCENARIO_2_2},
-        {"Visualize path for given group size increase only", Visualization::SCENARIO_2_2_ONLY},
+        {"Visualize path for given group size only",
+         Visualization::SCENARIO_2_1_ONLY},
+        {"Visualize path for given group size increase",
+         Visualization::SCENARIO_2_2},
+        {"Visualize path for given group size increase only",
+         Visualization::SCENARIO_2_2_ONLY},
         {"Visualize max flow path", Visualization::SCENARIO_2_3},
         {"Visualize max flow path only", Visualization::SCENARIO_2_3_ONLY},
         {"Visualize earliest finish", Visualization::SCENARIO_2_4},
         {"Visualize earliest finish only", Visualization::SCENARIO_2_4_ONLY},
         {"Visualize max wait time", Visualization::SCENARIO_2_5},
         {"Visualize max wait time only", Visualization::SCENARIO_2_5_ONLY},
-    }, options{};
+    },
+        options{};
 
     std::copy_if(
         possibleOptions.begin(), possibleOptions.end(),
